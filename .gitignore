@@ -1,0 +1,14 @@
+# OpenDesign workbench internals — never published to the repo
+Compro-DOB-New.pdf.pdf
+brand.html
+brand.json
+DESIGN.md
+guide.md
+design-system-v2.md
+.file-versions/
+system/
+prefetch/
+*.artifact.json
+
+# macOS
+.DS_Store

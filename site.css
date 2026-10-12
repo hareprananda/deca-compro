@@ -34,6 +34,12 @@
   --green-ink:#167c18;
   --green-deep:#175119;
 
+  /* ---- roles that flip meaning between themes, not just value ---- */
+  --field:var(--green-deep);   /* solid green surface: the band, active chips */
+  --on-field:var(--paper);     /* text sitting on that surface */
+  --on-green:var(--ink);       /* label on the brand-green button */
+  --plate:#ffffff;             /* light plate behind product screenshots */
+
   /* ---- derived ---- */
   --ink-heading:color-mix(in oklab, var(--ink) 90%, var(--green));
   --green-tint:color-mix(in oklab, var(--green) 8%, var(--paper));
@@ -62,6 +68,111 @@
   --font:"CircularStd",system-ui,-apple-system,Roboto,Arial,sans-serif;
   --container:1200px;
   --nav-h:76px;
+}
+
+/* ==========================================================================
+   DARK THEME
+   Not a filter over the light theme — a second set of tokens in the same
+   green-tinted family, measured against the dark canvas:
+     ink 16.6:1 · muted 7.7:1 · brand green as text 6.7:1
+   The brand green is never altered. Only what sits ON it flips.
+
+   What inverts and why:
+     · The "deep field" becomes a RAISED panel. In light it is darker than
+       the paper; in dark, elevation reads as lighter, so --field is #123a1c
+       against a #0a0f0b canvas (light ink on it: 10.9:1).
+     · The button label flips dark. A light label on brand green would be
+       2.5:1; dark on brand green is 6.7:1.
+     · Product screenshots keep a white plate. They are photographs of lit
+       screens, so they stay lit rather than being inverted.
+   ========================================================================== */
+:root[data-theme="dark"]{
+  --paper:#0a0f0b;
+  --mist:#131b14;
+  --ink:#e9efe9;
+  --muted:#9aa79c;
+  --rule:#242e25;
+  --green:#01b101;
+  --green-ink:#01b101;
+  --green-deep:#123a1c;
+  --green-tint:color-mix(in oklab, var(--green) 14%, var(--paper));
+  --green-soft:color-mix(in oklab, var(--green) 24%, var(--paper));
+  --green-hover:color-mix(in oklab, var(--green) 88%, var(--ink));
+  --field:var(--green-deep);
+  --on-field:var(--ink);
+  --on-deep:color-mix(in oklab, var(--ink) 76%, var(--green));
+  --on-deep-soft:color-mix(in oklab, var(--ink) 26%, transparent);
+  --grid-on-deep:color-mix(in oklab, var(--ink) 8%, transparent);
+  --ink-heading:var(--ink);
+  --sh-sm:0 2px 6px color-mix(in oklab, var(--paper) 70%, transparent);
+  --sh-md:0 8px 24px color-mix(in oklab, var(--paper) 75%, transparent);
+  --sh-lg:0 20px 48px color-mix(in oklab, var(--paper) 80%, transparent);
+}
+
+/* With scripting off the head script never runs, so follow the system here.
+   The block below is deliberately a duplicate of the one above — plain CSS
+   has no way to share a declaration list across a media boundary, and this
+   guarantees the theme is right on the very first paint either way. */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-theme="dark"]){
+    --paper:#0a0f0b;
+    --mist:#131b14;
+    --ink:#e9efe9;
+    --muted:#9aa79c;
+    --rule:#242e25;
+    --green:#01b101;
+    --green-ink:#01b101;
+    --green-deep:#123a1c;
+    --green-tint:color-mix(in oklab, var(--green) 14%, var(--paper));
+    --green-soft:color-mix(in oklab, var(--green) 24%, var(--paper));
+    --green-hover:color-mix(in oklab, var(--green) 88%, var(--ink));
+    --field:var(--green-deep);
+    --on-field:var(--ink);
+    --on-deep:color-mix(in oklab, var(--ink) 76%, var(--green));
+    --on-deep-soft:color-mix(in oklab, var(--ink) 26%, transparent);
+    --grid-on-deep:color-mix(in oklab, var(--ink) 8%, transparent);
+    --ink-heading:var(--ink);
+    --sh-sm:0 2px 6px color-mix(in oklab, var(--paper) 70%, transparent);
+    --sh-md:0 8px 24px color-mix(in oklab, var(--paper) 75%, transparent);
+    --sh-lg:0 20px 48px color-mix(in oklab, var(--paper) 80%, transparent);
+  }
+}
+
+/* Screenshots sit on a light plate in dark mode so they read as lit screens
+   rather than as holes punched in the page. */
+:root[data-theme="dark"] .hero-art img,
+:root[data-theme="dark"] .split-art img,
+:root[data-theme="dark"] .prose figure img{
+  background:var(--plate);border-radius:var(--r-card);
+}
+:root[data-theme="dark"] .flow-shot,
+:root[data-theme="dark"] .channels-scroll,
+:root[data-theme="dark"] .banner-scroll{background:var(--plate)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .hero-art img,
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .split-art img,
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .prose figure img{
+    background:var(--plate);border-radius:var(--r-card);
+  }
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .flow-shot,
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .channels-scroll,
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .banner-scroll{background:var(--plate)}
+}
+
+/* the switch itself */
+.theme-toggle{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex:none;border-radius:var(--r-btn);
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  transition:border-color .18s ease,color .18s ease;
+}
+.theme-toggle:hover{border-color:var(--green-ink);color:var(--green-ink)}
+.theme-toggle .ico-sun{display:none}
+:root[data-theme="dark"] .theme-toggle .ico-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .ico-moon{display:none}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .theme-toggle .ico-sun{display:block}
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .theme-toggle .ico-moon{display:none}
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -129,7 +240,7 @@ table{border-collapse:collapse;width:100%}
 .section-head.center .sec-num{justify-content:center}
 .section-head.center .sec-num::after{display:none}
 .on-deep .sec-num{color:var(--on-deep)}
-.on-deep .sec-num b{color:var(--paper)}
+.on-deep .sec-num b{color:var(--on-field)}
 .on-deep .sec-num::after{background:var(--on-deep-soft)}
 
 /* money: figures line up, the currency reads second */
@@ -149,7 +260,7 @@ table{border-collapse:collapse;width:100%}
   transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .12s ease;
 }
 /* ink label on brand green — 6.22:1. White would be 2.88:1 and fails. */
-.btn-primary{background:var(--green);color:var(--ink);box-shadow:var(--sh-sm)}
+.btn-primary{background:var(--green);color:var(--on-green);box-shadow:var(--sh-sm)}
 .btn-primary:hover{background:var(--green-hover);box-shadow:var(--sh-md)}
 .btn-primary:active{background:var(--green-hover);transform:translateY(1px)}
 .btn-outline{border-color:var(--green-ink);color:var(--green-ink);background:var(--paper)}
@@ -241,12 +352,12 @@ table{border-collapse:collapse;width:100%}
 /* ==========================================================================
    BANDS & PANELS
    ========================================================================== */
-.band{background:var(--green-deep);color:var(--paper)}
+.band{background:var(--field);color:var(--on-field)}
 .band .container{padding-top:var(--s12);padding-bottom:var(--s12)}
-.band .h2,.band .h3{color:var(--paper)}
+.band .h2,.band .h3{color:var(--on-field)}
 .band .lede{color:var(--on-deep)}
 .band .small{color:var(--on-deep)}
-.band a:not(.btn){color:var(--paper)}
+.band a:not(.btn){color:var(--on-field)}
 
 .panel-wash{background:var(--mist);border:1px solid var(--rule);border-radius:var(--r-panel);padding:clamp(32px,5vw,72px)}
 .trust{background:var(--mist);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
@@ -309,7 +420,7 @@ table{border-collapse:collapse;width:100%}
   transition:background-color .18s ease,border-color .18s ease,color .18s ease;
 }
 .chip:hover{border-color:var(--green-ink);color:var(--green-ink)}
-.chip[aria-pressed="true"]{background:var(--green-deep);border-color:var(--green-deep);color:var(--paper)}
+.chip[aria-pressed="true"]{background:var(--field);border-color:var(--field);color:var(--on-field)}
 .chip .n{color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
 .chip[aria-pressed="true"] .n{color:var(--on-deep)}
 .svc-grid{display:grid;gap:var(--s2)}
@@ -341,11 +452,11 @@ table{border-collapse:collapse;width:100%}
 .flow-tab{
   min-height:46px;padding:0 22px;border-radius:var(--r-chip);
   border:1px solid var(--on-deep-soft);
-  background:transparent;color:var(--paper);font-size:14px;font-weight:700;
+  background:transparent;color:var(--on-field);font-size:14px;font-weight:700;
   transition:background-color .18s ease,color .18s ease,border-color .18s ease;
 }
-.flow-tab:hover{border-color:var(--paper)}
-.flow-tab[aria-selected="true"]{background:var(--paper);color:var(--green-deep);border-color:var(--paper)}
+.flow-tab:hover{border-color:var(--on-field)}
+.flow-tab[aria-selected="true"]{background:var(--on-field);color:var(--field);border-color:var(--on-field)}
 .flow-panel{display:grid;gap:var(--s8);align-items:start}
 .flow-panel[hidden]{display:none}
 .steps{display:grid;gap:2px}
@@ -357,10 +468,10 @@ table{border-collapse:collapse;width:100%}
 .steps li:last-child{border-bottom:0}
 .steps .num{
   width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--on-deep-soft);font-size:13px;font-weight:700;color:var(--paper);
+  border:1px solid var(--on-deep-soft);font-size:13px;font-weight:700;color:var(--on-field);
   font-variant-numeric:tabular-nums;
 }
-.steps strong{color:var(--paper);font-weight:700}
+.steps strong{color:var(--on-field);font-weight:700}
 .steps .t{display:block;text-wrap:pretty}
 .flow-shot{background:var(--paper);border-radius:var(--r-card);padding:var(--s3);box-shadow:var(--sh-lg);justify-self:center;width:100%;max-width:400px}
 .flow-shot img{width:100%;height:auto;border-radius:8px}
@@ -587,7 +698,6 @@ details[open]::details-content{block-size:auto}
 }
 @media (min-width:900px){
   .nav-links{display:flex}
-  .nav-cta{display:inline-flex}
   .burger{display:none}
   .nav-mobile{display:none !important}
   .hero{padding:var(--s10) 0 var(--s12)}
@@ -619,6 +729,12 @@ details[open]::details-content{block-size:auto}
   .footer-grid{grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:var(--s5)}
   .doc-layout{display:grid;grid-template-columns:260px 1fr;gap:var(--s10);align-items:start}
   .doc-layout .toc{position:sticky;top:calc(var(--nav-h) + 24px)}
+}
+/* The nav CTA waits for real room. With the theme switch added, logo + six
+   links + toggle + CTA needs ~885px, which the 900px breakpoint does not yet
+   have — so the CTA joins at 1000px rather than crowding the links. */
+@media (min-width:1000px){
+  .nav-cta{display:inline-flex}
 }
 @media (min-width:1100px){
   .svc-grid{grid-template-columns:repeat(4,1fr)}

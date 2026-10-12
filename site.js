@@ -13,6 +13,45 @@
     return Array.prototype.slice.call((root || document).querySelectorAll(sel));
   }
 
+  /* ---------- theme switch ----------
+     The head script has already set data-theme before first paint; this only
+     handles the toggle and keeps an explicit choice sticky. If the visitor
+     never chose, we keep following the system as it changes. */
+  var root = document.documentElement;
+  var toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    var stored = null;
+    try { stored = localStorage.getItem('deca-theme'); } catch (e) {}
+
+    var sync = function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      toggle.setAttribute('aria-pressed', String(dark));
+      toggle.setAttribute('aria-label', dark ? 'Ganti ke tema terang' : 'Ganti ke tema gelap');
+    };
+
+    toggle.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('deca-theme', next); } catch (e) {}
+      stored = next;
+      sync();
+    });
+
+    sync();
+
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      var onSystem = function (e) {
+        if (stored !== 'dark' && stored !== 'light') {
+          root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          sync();
+        }
+      };
+      if (mq.addEventListener) mq.addEventListener('change', onSystem);
+      else if (mq.addListener) mq.addListener(onSystem);
+    }
+  }
+
   /* ---------- scroll reveal ---------- */
   var revealables = all('.reveal');
   if (revealables.length) {

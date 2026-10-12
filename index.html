@@ -8,7 +8,7 @@
 <link rel="icon" href="logos/deca-app-icon.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="site.css">
-<script>document.documentElement.classList.add('js');</script>
+<script>document.documentElement.classList.add('js');(function(){try{var t=localStorage.getItem('deca-theme');if(t!=='dark'&&t!=='light'){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body>
 <a class="skip" href="#main">Lewati ke konten utama</a>
@@ -28,6 +28,10 @@
       <a href="deca-perusahaan.html">Perusahaan</a>
     </nav>
     <div class="nav-right">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ganti ke tema gelap" aria-pressed="false">
+        <svg class="ico-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.6A8.6 8.6 0 019.4 4a8.6 8.6 0 1010.6 10.6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        <svg class="ico-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.6v2.1M12 19.3v2.1M2.6 12h2.1M19.3 12h2.1M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M18.7 5.3l-1.5 1.5M6.8 17.2l-1.5 1.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
       <a href="#download" class="btn btn-ghost nav-cta">Unduh Aplikasi</a>
       <button class="burger" id="burger" aria-expanded="false" aria-controls="nav-mobile" aria-label="Buka menu">
         <span></span><span></span><span></span>
