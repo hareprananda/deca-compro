@@ -1,0 +1,649 @@
+/* ==========================================================================
+   DECA — Design System v2 «Ledger»
+   See design-system-v2.md for the rationale.
+
+   Numbers are the brand: amounts, limits, fees, step counts and status are
+   the real content of a payments product, so they get the visual budget.
+   Green stays dominant and now carries meaning — fills, live status, the one
+   dark field — instead of decoration. Teal is dropped; two accents competed.
+
+   Registered palette (the only hex literals in this file):
+     --paper      #ffffff   canvas
+     --mist       #f1f6f1   the one surface
+     --ink        #0d1a10   body & headings         17.91:1 on paper
+     --muted      #5c6b5f   secondary text           5.64:1 on paper
+     --rule       #dfe7df   hairlines (non-text)
+     --green      #01b101   brand hero — FILLS ONLY, never text
+     --green-ink  #167c18   text-safe green          5.34:1 paper / 4.86:1 mist
+     --green-deep #175119   the one dark field       9.43:1 with white on it
+
+   Measured, not eyeballed: white on #01b101 is 2.88:1, so button labels are
+   ink (6.22:1). A 76% green-ink mix failed on the mist surface (4.15:1), so
+   the token was deepened to 68% — one green for text, safe on every surface.
+   Everything else is derived with color-mix() from the eight values above.
+   ========================================================================== */
+
+:root{
+  /* ---- registered palette ---- */
+  --paper:#ffffff;
+  --mist:#f1f6f1;
+  --ink:#0d1a10;
+  --muted:#5c6b5f;
+  --rule:#dfe7df;
+  --green:#01b101;
+  --green-ink:#167c18;
+  --green-deep:#175119;
+
+  /* ---- derived ---- */
+  --ink-heading:color-mix(in oklab, var(--ink) 90%, var(--green));
+  --green-tint:color-mix(in oklab, var(--green) 8%, var(--paper));
+  --green-soft:color-mix(in oklab, var(--green) 16%, var(--paper));
+  --green-hover:color-mix(in oklab, var(--green) 92%, var(--paper));
+  --on-deep:color-mix(in oklab, var(--paper) 88%, var(--green));
+  --on-deep-soft:color-mix(in oklab, var(--paper) 22%, transparent);
+  /* the ledger rule — kept for one surface only, the deep green field */
+  --grid-on-deep:color-mix(in oklab, var(--paper) 9%, transparent);
+  --grid-cell:40px;
+  --sh-sm:0 2px 6px color-mix(in oklab, var(--ink) 7%, transparent);
+  --sh-md:0 8px 24px color-mix(in oklab, var(--ink) 9%, transparent);
+  --sh-lg:0 20px 48px color-mix(in oklab, var(--ink) 13%, transparent);
+
+  /* ---- geometry: each shape has a job ---- */
+  --r-btn:10px;      /* solid, confident */
+  --r-chip:999px;    /* capsule = selectable */
+  --r-badge:4px;     /* label, not a button */
+  --r-card:16px;
+  --r-panel:32px;
+
+  /* ---- 8px baseline grid ---- */
+  --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:40px;
+  --s6:48px; --s8:64px; --s10:80px; --s12:96px;
+
+  --font:"CircularStd",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --container:1200px;
+  --nav-h:76px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;overflow-x:clip}
+/* Plain paper. The ruled grid now appears in exactly one place — the deep
+   green field, where it reads as a ledger rather than as page-wide texture. */
+body{
+  margin:0;font-family:var(--font);font-weight:400;font-size:16px;line-height:1.6;
+  color:var(--ink);background:var(--paper);
+}
+.band{position:relative;isolation:isolate}
+.band::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(to right, var(--grid-on-deep) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-on-deep) 1px, transparent 1px);
+  background-size:var(--grid-cell) var(--grid-cell);
+  -webkit-mask-image:linear-gradient(to bottom,transparent,var(--ink) 14%,var(--ink) 86%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,var(--ink) 14%,var(--ink) 86%,transparent);
+}
+img{max-width:100%;display:block}
+h1,h2,h3,h4{margin:0;color:var(--ink-heading);font-weight:700;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+ul,ol{margin:0;padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+table{border-collapse:collapse;width:100%}
+:focus-visible{outline:3px solid var(--green-ink);outline-offset:2px;border-radius:4px}
+.band :focus-visible{outline-color:var(--paper)}
+
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--s3)}
+.container-narrow{max-width:820px;margin:0 auto;padding:0 var(--s3)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--paper);color:var(--ink);padding:12px 20px;border-radius:var(--r-card)}
+.skip:focus{left:var(--s3);top:var(--s2)}
+[id]{scroll-margin-top:calc(var(--nav-h) + 20px)}
+
+/* ==========================================================================
+   TYPE — hierarchy from size, weight, tracking and colour. One family.
+   ========================================================================== */
+.eyebrow{
+  display:inline-flex;align-items:center;
+  font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--rule);border-radius:var(--r-badge);
+  padding:8px 14px;background:var(--paper);
+}
+.h1{font-size:clamp(34px,5.4vw,58px);line-height:1.06;letter-spacing:-.035em}
+.h2{font-size:clamp(28px,3.8vw,44px);line-height:1.1;letter-spacing:-.03em}
+.h3{font-size:clamp(19px,2.1vw,24px);line-height:1.25;letter-spacing:-.02em}
+.lede{font-size:17px;color:var(--muted);max-width:64ch}
+.small{font-size:14px;color:var(--muted)}
+.section{padding:var(--s12) 0}
+.section-head{max-width:780px;margin-bottom:var(--s6)}
+.section-head .h2{margin-bottom:var(--s2)}
+.section-head.center{margin-left:auto;margin-right:auto;text-align:center}
+
+/* the decisive flourish: a green numeral on a hairline that runs to the edge */
+.sec-num{
+  display:flex;align-items:center;gap:var(--s3);
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:var(--s3);
+}
+.sec-num b{font-size:15px;color:var(--green-ink);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.sec-num::after{content:"";flex:1;height:1px;background:var(--rule)}
+.section-head.center .sec-num{justify-content:center}
+.section-head.center .sec-num::after{display:none}
+.on-deep .sec-num{color:var(--on-deep)}
+.on-deep .sec-num b{color:var(--paper)}
+.on-deep .sec-num::after{background:var(--on-deep-soft)}
+
+/* money: figures line up, the currency reads second */
+.amount{
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;font-weight:700;
+  color:var(--ink);white-space:nowrap;
+}
+.amount .cur{font-size:.62em;font-weight:700;color:var(--muted);margin-right:.14em;letter-spacing:0}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;padding:0 28px;border-radius:var(--r-btn);
+  font-size:15px;font-weight:700;letter-spacing:-.005em;border:1px solid transparent;
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .12s ease;
+}
+/* ink label on brand green — 6.22:1. White would be 2.88:1 and fails. */
+.btn-primary{background:var(--green);color:var(--ink);box-shadow:var(--sh-sm)}
+.btn-primary:hover{background:var(--green-hover);box-shadow:var(--sh-md)}
+.btn-primary:active{background:var(--green-hover);transform:translateY(1px)}
+.btn-outline{border-color:var(--green-ink);color:var(--green-ink);background:var(--paper)}
+.btn-outline:hover{background:var(--green-ink);color:var(--paper)}
+.btn-ghost{border-color:var(--rule);color:var(--ink);background:var(--paper);min-height:44px;padding:0 20px;font-size:14px}
+.btn-ghost:hover{border-color:var(--green-ink);color:var(--green-ink);box-shadow:var(--sh-sm)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+.link-arrow{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--green-ink);min-height:44px}
+.link-arrow svg{transition:transform .18s ease}
+.link-arrow:hover svg{transform:translateX(4px)}
+.link-arrow:hover{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+.link-plain{color:var(--green-ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+
+/* ==========================================================================
+   NAV
+   ========================================================================== */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in oklab, var(--paper) 90%, transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--rule);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);height:var(--nav-h)}
+.nav-logo img{width:124px;height:40px}
+.nav-links{display:none;align-items:center;gap:2px}
+.nav-links a{
+  padding:9px 14px;border-radius:var(--r-btn);font-size:15px;font-weight:700;color:var(--ink);
+  transition:background-color .18s ease,color .18s ease;
+}
+.nav-links a:hover{background:var(--mist)}
+.nav-links a[aria-current="page"]{color:var(--green-ink);background:var(--mist)}
+.nav-right{display:flex;align-items:center;gap:var(--s2)}
+.nav-cta{display:none}
+.burger{
+  display:flex;flex-direction:column;justify-content:center;gap:5px;align-items:center;
+  width:44px;height:44px;border-radius:var(--r-btn);border:1px solid var(--rule);background:var(--paper);
+}
+.burger span{display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s ease,opacity .2s ease}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-mobile{display:none;border-top:1px solid var(--rule);background:var(--paper);max-height:calc(100vh - var(--nav-h));overflow-y:auto}
+.nav-mobile.open{display:block}
+.nav-mobile ul{padding:var(--s2) 0}
+.nav-mobile a{display:block;padding:14px var(--s3);font-weight:700;font-size:17px}
+.nav-mobile a:hover{background:var(--mist)}
+.nav-mobile a[aria-current="page"]{color:var(--green-ink)}
+
+/* ==========================================================================
+   HERO — homepage
+   ========================================================================== */
+.hero{padding:var(--s8) 0 var(--s10)}
+.hero-grid{display:grid;gap:var(--s8);align-items:center}
+.hero h1{font-size:clamp(36px,6.8vw,68px);line-height:1.02;letter-spacing:-.04em;margin:var(--s3) 0 var(--s2)}
+.hero h1 .hl{color:var(--green-ink)}
+.hero .lede{font-size:18px;margin-bottom:var(--s5)}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s4)}
+.hero-facts{display:flex;flex-wrap:wrap;gap:8px var(--s3);margin-top:var(--s5);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
+.hero-facts li{display:flex;align-items:center;gap:8px}
+.hero-facts li::before{content:"";width:6px;height:6px;border-radius:1px;background:var(--green);flex:none}
+/* The single gradient in the system, and it earns its place: it frames the
+   product shot in brand green instead of leaving the phone floating on white. */
+.hero-art{justify-self:center;width:100%;max-width:520px;position:relative;isolation:isolate}
+.hero-art img{width:100%;height:auto;position:relative}
+.hero-art::before{
+  content:"";position:absolute;left:50%;top:46%;translate:-50% -50%;
+  width:118%;aspect-ratio:1;border-radius:50%;z-index:-1;
+  background:radial-gradient(closest-side,
+    color-mix(in oklab, var(--green) 22%, transparent) 0%,
+    color-mix(in oklab, var(--green) 9%, transparent) 48%,
+    transparent 74%);
+}
+
+/* ==========================================================================
+   PAGE HERO — interior pages
+   ========================================================================== */
+.page-hero{background:var(--mist);border-bottom:1px solid var(--rule);padding:var(--s8) 0 var(--s10)}
+.page-hero .h1{margin:var(--s3) 0 var(--s2);max-width:20ch}
+.page-hero .lede{font-size:18px}
+.page-hero-actions{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);align-items:center;margin-top:var(--s5)}
+/* Interior headers carry a real app screen, so they read as a page about a
+   product rather than as a flat coloured band. Hidden on small screens. */
+.page-hero-art{display:none}
+.crumbs{display:flex;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--muted);margin-bottom:var(--s2)}
+.crumbs a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.crumbs a:hover{color:var(--ink)}
+.crumbs li+li::before{content:"/";margin-right:8px;color:var(--rule)}
+
+/* ==========================================================================
+   BANDS & PANELS
+   ========================================================================== */
+.band{background:var(--green-deep);color:var(--paper)}
+.band .container{padding-top:var(--s12);padding-bottom:var(--s12)}
+.band .h2,.band .h3{color:var(--paper)}
+.band .lede{color:var(--on-deep)}
+.band .small{color:var(--on-deep)}
+.band a:not(.btn){color:var(--paper)}
+
+.panel-wash{background:var(--mist);border:1px solid var(--rule);border-radius:var(--r-panel);padding:clamp(32px,5vw,72px)}
+.trust{background:var(--mist);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.trust-grid{display:grid;gap:var(--s4);padding:var(--s6) 0}
+.trust-item h3{font-size:16px;margin-bottom:6px;letter-spacing:-.01em}
+.trust-item p{font-size:14px;color:var(--muted)}
+
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+.grid{display:grid;gap:var(--s3)}
+.card{
+  background:var(--paper);border:1px solid var(--rule);border-radius:var(--r-card);
+  padding:var(--s4);transition:box-shadow .2s ease,border-color .2s ease,translate .2s ease;
+  display:flex;flex-direction:column;
+}
+.card:hover{box-shadow:var(--sh-md);border-color:var(--green-ink);translate:0 -2px}
+.card-title{font-size:19px;margin-bottom:8px;letter-spacing:-.02em}
+.card-body{font-size:15px;color:var(--muted);flex:1}
+.card-foot{margin-top:var(--s3)}
+.ico-box{
+  width:44px;height:44px;border-radius:var(--r-btn);display:flex;align-items:center;justify-content:center;
+  background:var(--paper);border:1px solid var(--rule);color:var(--green-ink);margin-bottom:var(--s3);flex:none;
+}
+
+/* icon spacing follows whatever lays the block out: the promo card is already
+   a gapped flex column, the trust item is not */
+.promo-card .ico-box{margin-bottom:0}
+.trust-item .ico-box{margin-bottom:var(--s2)}
+
+/* promo card — states a standing benefit; no lift, it is not a destination */
+.promo-card{
+  border:1px solid var(--rule);border-radius:var(--r-card);background:var(--paper);
+  padding:var(--s4);display:flex;flex-direction:column;gap:var(--s2);
+  transition:border-color .2s ease,box-shadow .2s ease,translate .2s ease;
+}
+.promo-card:hover{border-color:var(--green-ink);box-shadow:var(--sh-md);translate:0 -2px}
+.promo-card h3{font-size:18px;letter-spacing:-.02em}
+.promo-card p{font-size:15px;color:var(--muted)}
+
+/* ==========================================================================
+   TAGS & BADGES — badge is a label, tag is a capsule
+   ========================================================================== */
+.badge{display:inline-block;padding:5px 10px;border-radius:var(--r-badge);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.badge-live{background:var(--green-ink);color:var(--paper)}
+.badge-soon{background:var(--mist);color:var(--muted);border:1px solid var(--rule)}
+.badge-neutral{background:var(--mist);color:var(--muted);border:1px solid var(--rule)}
+.tag{display:inline-block;padding:6px 14px;border-radius:var(--r-chip);font-size:12px;font-weight:700;background:var(--paper);border:1px solid var(--rule);color:var(--muted)}
+.tag:hover{border-color:var(--green-ink);color:var(--green-ink)}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ==========================================================================
+   CATALOG
+   ========================================================================== */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:var(--s5)}
+.chip{
+  min-height:44px;padding:0 20px;border-radius:var(--r-chip);
+  border:1px solid var(--rule);background:var(--paper);
+  font-size:14px;font-weight:700;color:var(--ink);
+  transition:background-color .18s ease,border-color .18s ease,color .18s ease;
+}
+.chip:hover{border-color:var(--green-ink);color:var(--green-ink)}
+.chip[aria-pressed="true"]{background:var(--green-deep);border-color:var(--green-deep);color:var(--paper)}
+.chip .n{color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"] .n{color:var(--on-deep)}
+.svc-grid{display:grid;gap:var(--s2)}
+.svc{
+  display:flex;flex-direction:column;justify-content:space-between;gap:var(--s3);
+  min-height:116px;padding:20px;background:var(--paper);
+  border:1px solid var(--rule);border-radius:var(--r-card);
+  transition:border-color .18s ease,box-shadow .18s ease,translate .18s ease;
+}
+.svc:hover{border-color:var(--green-ink);box-shadow:var(--sh-sm);translate:0 -2px}
+.svc-name{font-size:18px;line-height:1.3;letter-spacing:-.02em}
+.svc-cat{font-size:13px;color:var(--muted);margin-top:2px}
+.svc .badge{align-self:flex-start}
+.svc[hidden]{display:none}
+.empty{padding:var(--s5);border:1px dashed var(--rule);border-radius:var(--r-card);color:var(--muted);text-align:center}
+.channels{margin-top:var(--s8);padding-top:var(--s6);border-top:1px solid var(--rule)}
+
+/* Wide brand banners keep their natural ratio and stay legible on small
+   screens by scrolling inside their own container — the page never scrolls
+   sideways. */
+.channels-scroll,.banner-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:var(--r-card);background:var(--paper);padding:var(--s2)}
+.channels-scroll img{width:100%;min-width:820px;height:auto}
+.banner-scroll img{width:100%;min-width:720px;height:auto}
+
+/* ==========================================================================
+   FLOW — the one deep field
+   ========================================================================== */
+.flow-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:var(--s6) 0 var(--s5)}
+.flow-tab{
+  min-height:46px;padding:0 22px;border-radius:var(--r-chip);
+  border:1px solid var(--on-deep-soft);
+  background:transparent;color:var(--paper);font-size:14px;font-weight:700;
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease;
+}
+.flow-tab:hover{border-color:var(--paper)}
+.flow-tab[aria-selected="true"]{background:var(--paper);color:var(--green-deep);border-color:var(--paper)}
+.flow-panel{display:grid;gap:var(--s8);align-items:start}
+.flow-panel[hidden]{display:none}
+.steps{display:grid;gap:2px}
+.steps li{
+  display:grid;grid-template-columns:36px 1fr;gap:var(--s2);padding:var(--s2) 0;
+  border-bottom:1px solid var(--on-deep-soft);
+  font-size:15px;color:var(--on-deep);
+}
+.steps li:last-child{border-bottom:0}
+.steps .num{
+  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--on-deep-soft);font-size:13px;font-weight:700;color:var(--paper);
+  font-variant-numeric:tabular-nums;
+}
+.steps strong{color:var(--paper);font-weight:700}
+.steps .t{display:block;text-wrap:pretty}
+.flow-shot{background:var(--paper);border-radius:var(--r-card);padding:var(--s3);box-shadow:var(--sh-lg);justify-self:center;width:100%;max-width:400px}
+.flow-shot img{width:100%;height:auto;border-radius:8px}
+.flow-shot figcaption{font-size:13px;color:var(--muted);margin-top:var(--s2);text-align:center}
+.flow-note{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--on-deep-soft);font-size:14px;color:var(--on-deep)}
+
+/* numbered steps on light surfaces */
+.steps-light{display:grid;gap:var(--s3)}
+.steps-light li{display:grid;grid-template-columns:40px 1fr;gap:var(--s3);align-items:start}
+.steps-light .num{
+  width:36px;height:36px;border-radius:var(--r-btn);display:flex;align-items:center;justify-content:center;
+  background:var(--mist);border:1px solid var(--rule);color:var(--green-ink);font-weight:700;font-size:14px;
+  font-variant-numeric:tabular-nums;
+}
+.steps-light .t{display:block;font-size:15px;color:var(--muted);padding-top:6px;text-wrap:pretty}
+.steps-light strong{color:var(--ink);font-weight:700}
+
+/* ==========================================================================
+   SPLIT / FEATURE LIST
+   ========================================================================== */
+.split{display:grid;gap:var(--s8);align-items:center}
+.split-art{width:100%;max-width:460px;justify-self:center}
+.split-art img{width:100%;height:auto}
+.sec-list{margin-top:var(--s5)}
+.sec-item{padding:var(--s3) 0;border-top:1px solid var(--rule)}
+.sec-item:first-child{border-top:0;padding-top:0}
+.sec-item h3{display:flex;align-items:center;gap:12px;font-size:18px;margin-bottom:6px;letter-spacing:-.02em}
+.sec-item h3::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--green);flex:none}
+.sec-item p{font-size:15px;color:var(--muted);padding-left:20px}
+
+/* ==========================================================================
+   DOWNLOAD
+   ========================================================================== */
+.dl{text-align:center}
+.dl-actions{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);justify-content:center;align-items:center}
+
+/* ==========================================================================
+   FAQ
+   ========================================================================== */
+.faq{border-top:1px solid var(--rule)}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);
+  padding:var(--s3) 0;cursor:pointer;font-size:17px;font-weight:700;color:var(--ink-heading);
+  list-style:none;min-height:44px;letter-spacing:-.02em;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"";flex:none;width:16px;height:16px;margin-top:5px;background:var(--muted);
+  clip-path:polygon(50% 100%,0 35%,17% 18%,50% 54%,83% 18%,100% 35%);
+  transition:transform .2s ease;
+}
+.faq details[open] summary::after{transform:rotate(180deg)}
+.faq summary:hover{color:var(--green-ink)}
+.faq .answer{padding:0 0 var(--s3);font-size:15px;color:var(--muted);max-width:75ch}
+.faq .answer p+p{margin-top:var(--s2)}
+
+/* ==========================================================================
+   PROSE
+   ========================================================================== */
+.prose{font-size:16px;color:var(--ink)}
+.prose>*+*{margin-top:var(--s3)}
+.prose h2{font-size:clamp(22px,2.8vw,32px);margin-top:var(--s8);letter-spacing:-.03em}
+.prose h3{font-size:19px;margin-top:var(--s5);letter-spacing:-.02em}
+.prose p,.prose li{color:var(--muted);font-size:16px}
+.prose strong{color:var(--ink);font-weight:700}
+.prose ul,.prose ol{padding-left:24px;display:grid;gap:10px}
+.prose ul{list-style:disc}
+.prose ol{list-style:decimal}
+.prose li::marker{color:var(--green-ink)}
+.prose a{color:var(--green-ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.prose blockquote{border-left:3px solid var(--green);padding:var(--s2) var(--s4);margin:0;background:var(--mist);border-radius:0 var(--r-card) var(--r-card) 0}
+.prose blockquote p{color:var(--ink)}
+.prose figure{margin:var(--s5) 0}
+.prose figure img{border:1px solid var(--rule);border-radius:var(--r-card);background:var(--mist);width:100%;max-width:360px;height:auto;margin:0 auto}
+.prose figcaption{font-size:13px;color:var(--muted);text-align:center;margin-top:var(--s2)}
+.prose hr{border:0;border-top:1px solid var(--rule);margin:var(--s6) 0}
+.prose code{font-size:14px;background:var(--mist);border:1px solid var(--rule);border-radius:4px;padding:2px 6px;color:var(--ink)}
+
+.notice{border:1px solid var(--rule);border-radius:var(--r-card);background:var(--mist);padding:var(--s3);font-size:14px;color:var(--muted)}
+.notice strong{color:var(--ink)}
+
+.toc{border:1px solid var(--rule);border-radius:var(--r-card);padding:var(--s4);background:var(--mist)}
+.toc h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s2)}
+.toc li{margin-bottom:10px;font-size:15px}
+.toc a{color:var(--ink);font-weight:700}
+.toc a:hover{color:var(--green-ink);text-decoration:underline;text-underline-offset:3px}
+.toc li ul{margin-top:10px;padding-left:var(--s3)}
+.toc li ul a{font-weight:400;color:var(--muted);font-size:14px}
+
+/* ==========================================================================
+   TABLE — the ledger itself
+   ========================================================================== */
+.table-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r-card)}
+.table-wrap table{min-width:560px}
+th,td{padding:14px 20px;text-align:left;font-size:15px;border-bottom:1px solid var(--rule)}
+th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--mist);font-weight:700}
+td{color:var(--muted)}
+td strong{color:var(--ink)}
+td .amount{font-size:15px}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--mist)}
+
+/* ==========================================================================
+   FORM
+   ========================================================================== */
+.field{margin-bottom:var(--s3)}
+.field label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.field .hint{font-size:13px;color:var(--muted);margin-top:6px}
+.input,.textarea,.select{
+  width:100%;min-height:52px;padding:13px 16px;
+  border:1px solid var(--rule);border-radius:var(--r-btn);
+  background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+.textarea{min-height:140px;resize:vertical}
+.input::placeholder,.textarea::placeholder{color:var(--muted)}
+.input:hover,.textarea:hover,.select:hover{border-color:var(--green-ink)}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--green-ink);box-shadow:0 0 0 3px color-mix(in oklab, var(--green) 24%, transparent)}
+
+/* ==========================================================================
+   CTA BAND
+   ========================================================================== */
+.cta-band{background:var(--mist);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.cta-band .container{padding-top:var(--s10);padding-bottom:var(--s10);display:grid;gap:var(--s5);align-items:center}
+.cta-band .h2{margin-bottom:var(--s2)}
+.cta-actions{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);align-items:center}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.footer{border-top:1px solid var(--rule);background:var(--paper);padding:var(--s10) 0 0}
+.footer-grid{display:grid;gap:var(--s6)}
+.footer h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s2)}
+.footer li{font-size:15px;color:var(--muted);margin-bottom:10px}
+.footer li a{color:var(--ink);font-weight:700}
+.footer li a:hover{color:var(--green-ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.footer-brand img{width:124px;height:40px;margin-bottom:var(--s2)}
+.footer-brand p{font-size:15px;color:var(--muted)}
+.footer-brand a{color:var(--ink);font-weight:700}
+.footer-brand a:hover{color:var(--green-ink);text-decoration:underline;text-underline-offset:3px}
+.footer-bottom{
+  margin-top:var(--s8);padding:var(--s3) 0;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:space-between;font-size:14px;color:var(--muted);
+}
+.footer-bottom a{text-decoration:underline;text-underline-offset:3px}
+
+/* contact channels — an icon per channel, because the channel is the point */
+.contact-list li{
+  display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;
+  font-size:15px;color:var(--muted);margin-bottom:10px;
+}
+.contact-list svg{width:18px;height:18px;margin-top:4px;color:var(--green-ink)}
+.contact-list a{color:var(--ink);font-weight:700}
+.contact-list a:hover{color:var(--green-ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+
+/* ==========================================================================
+   MOTION
+   Everything is gated behind html.js, so with JavaScript off the page renders
+   complete and still — nothing is ever hidden by CSS alone.
+
+   Reveal uses `animation`, not `transition`, for two reasons: an animation
+   cannot be clobbered by the hover transitions already on cards, and
+   animation-delay (the stagger) never leaks into hover timing.
+   Hover lifts therefore use the separate `translate` property, which composes
+   with the animation's `transform` instead of fighting it.
+   ========================================================================== */
+.js .reveal{opacity:0}
+.js .reveal.in{opacity:1;animation:revealIn .7s cubic-bezier(.22,.61,.36,1) backwards}
+@keyframes revealIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* stagger, capped at six — past that the items are below the fold anyway */
+.js .grid>.reveal.in:nth-child(2),.js .trust-grid>.reveal.in:nth-child(2),.js .svc-grid>.reveal.in:nth-child(2){animation-delay:.07s}
+.js .grid>.reveal.in:nth-child(3),.js .trust-grid>.reveal.in:nth-child(3),.js .svc-grid>.reveal.in:nth-child(3){animation-delay:.14s}
+.js .grid>.reveal.in:nth-child(4),.js .trust-grid>.reveal.in:nth-child(4),.js .svc-grid>.reveal.in:nth-child(4){animation-delay:.21s}
+.js .grid>.reveal.in:nth-child(5),.js .trust-grid>.reveal.in:nth-child(5),.js .svc-grid>.reveal.in:nth-child(5){animation-delay:.28s}
+.js .grid>.reveal.in:nth-child(6),.js .trust-grid>.reveal.in:nth-child(6),.js .svc-grid>.reveal.in:nth-child(6){animation-delay:.35s}
+
+/* the flourish: the numeral lands, then its rule draws out to the edge */
+.js .sec-num::after{transform:scaleX(0);transform-origin:left}
+.js .sec-num.in::after{animation:ruleIn .95s cubic-bezier(.22,.61,.36,1) .18s backwards}
+@keyframes ruleIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* first paint: hero and interior page headers rise in on load */
+.js .hero-grid>*{animation:heroIn .85s cubic-bezier(.22,.61,.36,1) backwards}
+.js .hero-grid>*:nth-child(2){animation-delay:.14s}
+.js .page-hero .container>*{animation:heroIn .8s cubic-bezier(.22,.61,.36,1) backwards}
+.js .page-hero .container>*:nth-child(2){animation-delay:.08s}
+.js .page-hero .container>*:nth-child(3){animation-delay:.16s}
+.js .page-hero .container>*:nth-child(4){animation-delay:.24s}
+@keyframes heroIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* switching a how-to tab crossfades the panel instead of snapping */
+.js .flow-panel:not([hidden]){animation:panelIn .42s cubic-bezier(.22,.61,.36,1) backwards}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* FAQ opens smoothly where ::details-content is supported; otherwise it snaps,
+   which is exactly what it did before — a graceful, silent fallback */
+:root{interpolate-size:allow-keywords}
+details::details-content{
+  block-size:0;overflow:hidden;
+  transition:block-size .32s cubic-bezier(.22,.61,.36,1),content-visibility .32s allow-discrete;
+}
+details[open]::details-content{block-size:auto}
+
+/* reading progress, drawn on the nav's own bottom edge */
+.nav{transition:box-shadow .25s ease}
+.nav.is-scrolled{box-shadow:var(--sh-sm)}
+.nav::after{
+  content:"";position:absolute;left:0;bottom:-1px;height:2px;width:calc(var(--p,0) * 100%);
+  background:var(--green);border-radius:0 2px 2px 0;transition:width .12s linear;pointer-events:none;
+}
+/* the bar belongs to the header's edge, not to the bottom of an open menu */
+.nav:has(.nav-mobile.open)::after{display:none}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (min-width:640px){
+  .trust-grid{grid-template-columns:repeat(2,1fr);gap:var(--s5)}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (min-width:900px){
+  .nav-links{display:flex}
+  .nav-cta{display:inline-flex}
+  .burger{display:none}
+  .nav-mobile{display:none !important}
+  .hero{padding:var(--s10) 0 var(--s12)}
+  .hero-grid{grid-template-columns:1.15fr .85fr;gap:var(--s10)}
+  .page-hero{padding:var(--s10) 0 var(--s12)}
+  /* every text child stays in column 1; the product shot owns column 2 */
+  .page-hero .container{display:grid;grid-template-columns:1.15fr .85fr;gap:0 var(--s10);align-items:center}
+  .page-hero .container>*{grid-column:1;min-width:0}
+  .page-hero .container>.page-hero-art{
+    grid-column:2;grid-row:1/span 20;display:block;
+    justify-self:center;width:100%;max-width:330px;min-width:0;
+  }
+  .page-hero .container>.page-hero-art img{width:100%;height:auto}
+  .trust-grid{grid-template-columns:repeat(4,1fr)}
+  .trust-item{border-left:1px solid var(--rule);padding-left:var(--s3)}
+  .trust-item:first-child{border-left:0;padding-left:0}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .svc-grid{grid-template-columns:repeat(3,1fr)}
+  .flow-panel{grid-template-columns:1.15fr .85fr;gap:var(--s10)}
+  .flow-shot{order:2}
+  /* .split defaults to art-first: narrow art, wider text.
+     .split.text-first flips source order so the wider column stays with the copy. */
+  .split{grid-template-columns:.9fr 1.1fr;gap:var(--s10)}
+  .split.text-first{grid-template-columns:1.15fr .85fr}
+  /* an `fr` track defaults to min-width:auto, so one wide child can push the
+     track — and the whole grid — past its container. Pin the floor to 0. */
+  .split>*,.hero-grid>*,.flow-panel>*{min-width:0}
+  .cta-band .container{grid-template-columns:1fr auto}
+  .footer-grid{grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:var(--s5)}
+  .doc-layout{display:grid;grid-template-columns:260px 1fr;gap:var(--s10);align-items:start}
+  .doc-layout .toc{position:sticky;top:calc(var(--nav-h) + 24px)}
+}
+@media (min-width:1100px){
+  .svc-grid{grid-template-columns:repeat(4,1fr)}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+}
+
+/* Printing never scrolls, so nothing would ever reveal — force it. */
+@media print{
+  .js .reveal{opacity:1 !important;transform:none !important}
+  .js .sec-num::after{transform:scaleX(1) !important}
+  .nav::after{display:none}
+}
+
+/* Motion is decoration, never information — so when it is unwanted, all of it
+   goes, and the revealed state is forced so nothing can stay hidden. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    transition-duration:.001ms !important;
+    animation-duration:.001ms !important;
+    animation-delay:0s !important;
+    transition-delay:0s !important;
+  }
+  .js .reveal{opacity:1 !important;transform:none !important}
+  .js .sec-num::after{transform:scaleX(1) !important}
+  details::details-content{transition:none !important}
+  .nav::after{transition:none !important}
+}

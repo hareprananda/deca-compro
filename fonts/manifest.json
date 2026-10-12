@@ -1,0 +1,23 @@
+{
+  "format": "brand-fonts/1",
+  "files": [
+    {
+      "family": "CircularStd",
+      "weight": "400",
+      "style": "normal",
+      "file": "circular-std-book.woff2",
+      "format": "woff2",
+      "sourceUrl": "https://deca.co.id/fonts/CircularStd-Book.woff2",
+      "bytes": 28164
+    },
+    {
+      "family": "CircularStd",
+      "weight": "700",
+      "style": "normal",
+      "file": "circular-std-bold.woff2",
+      "format": "woff2",
+      "sourceUrl": "https://deca.co.id/fonts/CircularStd-Bold.woff2",
+      "bytes": 32012
+    }
+  ]
+}
