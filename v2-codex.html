@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DECA — Pembayaran yang menghubungkan bisnis</title>
+<meta name="description" content="DECA menghubungkan konsumen, merchant, dan bisnis lewat ekosistem pembayaran digital Indonesia. Top up, pulsa &amp; PPOB, transfer, tagihan, QRIS merchant, dan integrasi API.">
+<link rel="icon" href="logos/deca-b2b-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   DECA v2-codex — the B2B design system, contrast-corrected.
+   Merge of the two DECA properties:
+     · 103.159.199.42:8090  → the ecosystem frame, three products, six
+                              solution verticals, and the type/geometry system
+     · the consumer site    → the DECA Cash detail: features, how-to flows,
+                              channel catalogue, fees, and security
+   Colour values are the CORRECTED set: brand green untouched, labels and
+   text-safe variants moved only as far as 4.5:1 requires.
+   ========================================================================== */
+:root{
+  --paper:#f8fbf8;
+  --white:#ffffff;
+  --ink:#102521;
+  --muted:#657773;
+  --line:#e3ebe6;
+  --green:#05bd3b;        /* brand fill — 2.41 on paper, never used as text */
+  --green-ink:#08803f;    /* text-safe green — 4.6+ on paper, white AND green-pale */
+  --green-icon:#11a63a;   /* icon green, 3.08 */
+  --green-pale:#e7f9eb;
+  --blue:#0074db;
+  --blue-ink:#0172d7;     /* text-safe blue, 4.59 */
+  --blue-pale:#eaf3ff;
+  --mint:#e7f7f5;
+  --display:'Manrope',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  --body:'DM Sans',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  --r-btn:7px; --r-card:9px; --r-chip:10px; --r-panel:14px;
+  --max:1200px;
+  --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:40px; --s6:48px; --s8:64px; --s10:80px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:750;letter-spacing:-.055em;line-height:1.12;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+a{color:inherit;text-decoration:none}
+ul,ol{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--blue-ink);outline-offset:2px;border-radius:4px}
+.shell{width:min(var(--max),calc(100% - 64px));margin-inline:auto}
+section{padding:var(--s10) 0}
+.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--green-ink);margin-bottom:var(--s2)}
+.h2{font-size:clamp(28px,3.6vw,44px)}
+.lede{color:var(--muted);max-width:64ch}
+.head{margin-bottom:var(--s6);max-width:780px}
+.head .h2{margin-bottom:var(--s2)}
+.grid{display:grid;gap:var(--s3)}
+
+/* ---------- notice ---------- */
+.notice-bar{display:flex;align-items:center;justify-content:center;gap:9px;padding:8px 16px;background:var(--green-pale);color:var(--green-ink);font-size:11px;letter-spacing:.06em;font-weight:600;text-align:center}
+.notice-bar i{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
+
+/* ---------- header ---------- */
+.site-header{position:sticky;top:0;z-index:40;background:rgba(248,251,248,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.header-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);height:78px}
+.brand{position:relative;width:112px;height:50px;overflow:hidden;flex:none}
+.brand img{position:absolute;width:112px;height:112px;max-width:none;left:0;top:-38px}
+.main-nav{display:none;align-items:center;gap:var(--s4)}
+.main-nav a{font-size:13px;font-weight:600;color:var(--muted);transition:color .2s}
+.main-nav a:hover{color:var(--green-ink)}
+.header-actions{display:flex;align-items:center;gap:var(--s2)}
+.login-link{display:none;font-size:13px;font-weight:600;color:var(--muted)}
+.login-link:hover{color:var(--green-ink)}
+.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;align-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:var(--r-btn);background:var(--white)}
+.burger span{width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s,opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-mobile{display:none;border-top:1px solid var(--line);background:var(--white)}
+.nav-mobile.open{display:block}
+.nav-mobile a{display:block;padding:15px var(--s3);font-size:14px;font-weight:600;border-bottom:1px solid var(--line)}
+.nav-mobile a:hover{background:var(--green-pale)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:49px;padding:0 21px;border-radius:var(--r-btn);font-size:13px;font-weight:700;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
+.btn-primary:hover{box-shadow:0 10px 22px rgb(6 168 50 / .22)}
+.btn-quiet{color:var(--ink);padding:0 6px}
+.btn-quiet i{font-style:normal;color:var(--green-ink)}
+.btn-ghost{border:1px solid var(--line);background:var(--white);color:var(--ink);min-height:44px;padding:0 18px;font-size:13px}
+.btn-ghost:hover{border-color:var(--green-ink);color:var(--green-ink)}
+.btn-small{min-height:39px;padding:0 16px;font-size:12px;gap:10px}
+.link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--green-ink);min-height:44px}
+.link i{font-style:normal;transition:transform .2s}
+.link:hover i{transform:translate(3px,-3px)}
+
+/* ---------- hero ---------- */
+.hero{padding:var(--s8) 0 var(--s10);overflow:hidden;
+  background:radial-gradient(ellipse at 74% 30%,var(--green-pale) 0,transparent 46%),linear-gradient(180deg,#ffffff,var(--paper))}
+.hero-grid{display:grid;gap:var(--s8);align-items:center}
+.hero h1{font-size:clamp(36px,5.4vw,64px);margin:var(--s3) 0 var(--s2)}
+.hero h1 em{font-style:normal;color:var(--green-ink)}
+.hero .lede{font-size:17px;margin-bottom:var(--s5);max-width:52ch}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s3)}
+.hero-facts{display:flex;flex-wrap:wrap;gap:8px var(--s3);margin-top:var(--s5);padding-top:var(--s3);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.hero-facts li{display:flex;align-items:center;gap:8px}
+.hero-facts li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green-icon);flex:none}
+.hero-art{justify-self:center;width:100%;max-width:520px}
+.plate{background:var(--white);border:1px solid var(--line);border-radius:var(--r-panel);padding:var(--s2)}
+.plate img{width:100%;height:auto;border-radius:var(--r-card)}
+.arch{border-radius:110px 110px 12px 12px;overflow:hidden;border:1px solid var(--line);background:var(--white)}
+.arch img{width:100%;height:auto}
+
+/* ---------- nodes ---------- */
+.nodes{display:grid;gap:var(--s2)}
+.node{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s3);transition:transform .25s,box-shadow .25s,border-color .25s}
+.node:hover{transform:translateY(-4px);border-color:#b6dfc1;box-shadow:0 16px 35px rgb(20 53 29 / .06)}
+.node .kicker{font-size:10px;letter-spacing:.1em;font-weight:700;color:var(--muted)}
+.node h3{font-size:17px;margin:10px 0 6px}
+.node p{font-size:13px;color:var(--muted)}
+
+/* ---------- method strip ---------- */
+.methods{display:flex;flex-wrap:wrap;align-items:center;gap:10px var(--s3);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line)}
+.methods .lbl{font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--muted);text-transform:uppercase;margin-right:var(--s1)}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:14px;font-size:12px;font-weight:600;background:var(--white);border:1px solid var(--line);color:var(--ink);transition:background .2s,border-color .2s,color .2s}
+.chip:hover{border-color:var(--green-ink);color:var(--green-ink)}
+.chip[aria-pressed="true"]{background:var(--green-ink);border-color:var(--green-ink);color:var(--white)}
+
+/* ---------- products / tabs ---------- */
+.tabs{display:grid;grid-template-columns:1fr;border:1px solid var(--line);border-radius:var(--r-panel) var(--r-panel) 0 0;overflow:hidden;background:var(--white)}
+.tab{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;font-weight:700;color:var(--muted);transition:background .2s,color .2s}
+.tab:last-child{border-bottom:0}
+.tab:hover{background:var(--green-pale);color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--green-pale);color:var(--ink);box-shadow:inset 3px 0 0 var(--green-ink)}
+.tab small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:3px}
+.panel{border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-panel) var(--r-panel);background:var(--white);padding:var(--s5) var(--s4)}
+.panel[hidden]{display:none}
+.panel-grid{display:grid;gap:var(--s6);align-items:center}
+.panel h3{font-size:clamp(22px,2.4vw,30px);margin-bottom:var(--s2)}
+.panel .lede{font-size:15px}
+.checks{margin:var(--s4) 0;display:grid;gap:10px}
+.checks li{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:14px;color:var(--muted)}
+.checks li::before{content:"✓";color:var(--green-ink);font-weight:700}
+
+/* ---------- feature cards ---------- */
+.card{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s4);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:#b6dfc1;box-shadow:0 16px 35px rgb(20 53 29 / .06)}
+.card h3{font-size:17px;margin-bottom:8px}
+.card p{font-size:14px;color:var(--muted);flex:1}
+.ico{width:40px;height:40px;border-radius:var(--r-chip);display:grid;place-items:center;background:var(--green-pale);color:var(--green-ink);margin-bottom:var(--s3);flex:none}
+.ico.blue{background:var(--blue-pale);color:var(--blue-ink)}
+.ico.mint{background:var(--mint);color:#0c8580}
+.ico svg{width:20px;height:20px}
+
+/* ---------- steps ---------- */
+.steps{display:grid;gap:var(--s2);counter-reset:s}
+.steps li{display:grid;grid-template-columns:32px 1fr;gap:var(--s2);font-size:14px;color:var(--muted)}
+.steps li::before{counter-increment:s;content:counter(s);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--green-pale);color:var(--green-ink);font-family:var(--display);font-weight:750;font-size:12px}
+.steps strong{color:var(--ink);font-weight:700}
+
+/* ---------- table ---------- */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-card);background:var(--white)}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--paper)}
+td{color:var(--muted)}
+td strong{color:var(--ink)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--paper)}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-live{background:var(--green-ink);color:var(--white)}
+.badge-soon{background:var(--green-pale);color:var(--green-ink);border:1px solid var(--line)}
+
+/* ---------- solutions ---------- */
+.solution{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s4);transition:transform .25s,box-shadow .25s,border-color .25s}
+.solution:hover{transform:translateY(-4px);border-color:#b6dfc1;box-shadow:0 16px 35px rgb(20 53 29 / .06)}
+.solution .kicker{font-size:10px;letter-spacing:.1em;font-weight:700;color:var(--muted)}
+.solution h3{font-size:17px;margin:10px 0 6px}
+.solution p{font-size:13px;color:var(--muted)}
+
+/* ---------- trust ---------- */
+.stats{display:flex;flex-wrap:wrap;gap:var(--s5);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line)}
+.stats div{display:grid;gap:3px}
+.stats b{font-family:var(--display);font-weight:800;font-size:22px;color:var(--green-ink);letter-spacing:-.04em}
+.stats small{font-size:12px;color:var(--muted)}
+.sec-list{margin-top:var(--s4)}
+.sec-item{padding:var(--s3) 0;border-top:1px solid var(--line)}
+.sec-item:first-child{border-top:0;padding-top:0}
+.sec-item h4{font-size:16px;display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.sec-item h4::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--green-icon);flex:none}
+.sec-item p{font-size:14px;color:var(--muted);padding-left:18px}
+
+/* ---------- FAQ ---------- */
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:17px 0;cursor:pointer;list-style:none;font-family:var(--display);font-size:15px;font-weight:650;color:var(--ink);min-height:44px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{font-style:normal;color:var(--green-ink);font-size:18px;transition:transform .2s}
+.faq details[open] summary i{transform:rotate(45deg)}
+.faq summary:hover{color:var(--green-ink)}
+.faq .answer{padding:0 34px 16px 0;font-size:14px;color:var(--muted)}
+.faq .answer p+p{margin-top:10px}
+
+/* ---------- contact band ---------- */
+/* Deepened from the source's #087c3b → #09a84e → #0878ba, whose middle stop
+   gave white only 3.12:1 and its own lede 2.64:1. These stops clear 4.5 for
+   white AND for the light tints at every point along the ramp. */
+.band{background:linear-gradient(105deg,#04552a,#087038 63%,#064e7d);color:var(--white);position:relative;overflow:hidden}
+.band::after{content:"";position:absolute;width:460px;height:460px;right:-96px;top:-235px;border:1px solid rgb(255 255 255 / .17);border-radius:50%;box-shadow:0 0 0 35px rgb(255 255 255 / .04),0 0 0 75px rgb(255 255 255 / .03)}
+.band .shell{position:relative;z-index:1;display:grid;gap:var(--s5);align-items:center}
+.band h2{color:var(--white);font-size:clamp(26px,3.4vw,40px);margin-bottom:var(--s2)}
+.band .lede{color:#dcf1e2;font-size:15px}
+.band .eyebrow{color:#d4f4df}
+.band-actions{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);align-items:center}
+.btn-white{background:var(--white);color:var(--green-ink)}
+.band .tel{font-size:13px;color:#dcf1e2;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- footer ---------- */
+.footer{background:var(--white);border-top:1px solid var(--line);padding:var(--s8) 0 0}
+.footer-grid{display:grid;gap:var(--s5)}
+.footer h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s2);font-weight:700}
+.footer li{font-size:13px;color:var(--muted);margin-bottom:10px}
+.footer li a{color:var(--ink);font-weight:600}
+.footer li a:hover{color:var(--green-ink);text-decoration:underline;text-underline-offset:3px}
+.footer-brand .tagline{font-size:13px;color:var(--muted);margin-top:var(--s2);font-weight:600;font-family:var(--display)}
+.footer-bottom{margin-top:var(--s6);padding:var(--s3) 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:space-between;font-size:12px;color:var(--muted)}
+
+/* ---------- responsive ---------- */
+@media (min-width:640px){
+  .nodes{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (min-width:900px){
+  .main-nav{display:flex}
+  .login-link{display:inline}
+  .burger{display:none}
+  .nav-mobile{display:none !important}
+  .hero{padding:var(--s10) 0 var(--s10)}
+  .hero-grid{grid-template-columns:1.06fr .94fr;gap:var(--s10)}
+  .nodes{grid-template-columns:repeat(4,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .tabs{grid-template-columns:repeat(3,1fr);border-radius:var(--r-panel) var(--r-panel) 0 0}
+  .tab{border-bottom:0;border-right:1px solid var(--line)}
+  .tab:last-child{border-right:0}
+  .tab[aria-selected="true"]{box-shadow:inset 0 -3px 0 var(--green-ink)}
+  .panel-grid{grid-template-columns:1fr 1fr;gap:var(--s8)}
+  .panel-grid.reverse .panel-art{order:2}
+  .band .shell{grid-template-columns:1fr auto}
+  .footer-grid{grid-template-columns:1.3fr 1fr 1.2fr;gap:var(--s6)}
+  .split{grid-template-columns:1.1fr .9fr;gap:var(--s8);align-items:center}
+  .split.reverse .split-art{order:2}
+}
+@media (min-width:1100px){ .grid-4{grid-template-columns:repeat(4,1fr)} }
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" style="position:absolute;left:-9999px">Lewati ke konten utama</a>
+
+<p class="notice-bar" data-od-id="notice"><i></i> Dibangun untuk kebutuhan transaksi Indonesia &nbsp;·&nbsp; Konsumen · Merchant · Bisnis · Mitra</p>
+
+<!-- ================= HEADER ================= -->
+<header class="site-header" data-od-id="site-header">
+  <div class="shell header-in">
+    <a class="brand" href="#top" aria-label="DECA — Beranda"><img src="logos/deca-b2b-logo.png" alt="DECA"></a>
+    <nav class="main-nav" aria-label="Navigasi utama">
+      <a href="#produk">Produk</a>
+      <a href="#solusi">Solusi</a>
+      <a href="#ekosistem">Ekosistem</a>
+      <a href="#tentang">Tentang DECA</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <a class="login-link" href="#kontak">Masuk</a>
+      <a class="btn btn-primary btn-small" href="#kontak">Buat akun <span>↗</span></a>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="nav-mobile" aria-label="Buka menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="#produk">Produk</a>
+    <a href="#solusi">Solusi</a>
+    <a href="#ekosistem">Ekosistem</a>
+    <a href="#tentang">Tentang DECA</a>
+    <a href="#faq">FAQ</a>
+    <a href="#kontak">Masuk</a>
+  </div>
+</header>
+
+<main id="main">
+<span id="top"></span>
+
+<!-- ================= HERO ================= -->
+<section class="hero" data-od-id="hero">
+  <div class="shell hero-grid">
+    <div>
+      <p class="eyebrow">Pembayaran digital · Indonesia</p>
+      <h1 data-od-id="hero-title">Urusan transaksi, jadi lebih <em>terhubung.</em></h1>
+      <p class="lede">Dari pembayaran sehari-hari hingga operasional bisnis, DECA membantu setiap bagian bergerak dalam satu ekosistem digital.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#kontak" data-od-id="cta-hero">Mulai bersama DECA <span>↗</span></a>
+        <a class="link" href="#produk">Kenali produk <i>↓</i></a>
+      </div>
+      <ul class="hero-facts">
+        <li>Top up tanpa biaya admin</li>
+        <li>Berizin Bank Indonesia</li>
+        <li>Konsumen, merchant &amp; bisnis</li>
+      </ul>
+    </div>
+    <div class="hero-art">
+      <div class="plate">
+        <img src="imagery/app-topup-1.png" width="680" height="782"
+             alt="Beranda aplikasi DECA: saldo deca cash Rp 15.000.000, pintasan Top Up, Transfer, Tarik Tunai dan Riwayat, serta grid layanan Pulsa/Paket Data, Listrik, BPJS Kesehatan, Internet dan PDAM.">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EKOSISTEM ================= -->
+<section id="ekosistem" data-od-id="ekosistem">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Satu ekosistem · Banyak kemungkinan</p>
+      <h2 class="h2" data-od-id="ekosistem-title">Setiap transaksi punya jalurnya.</h2>
+      <p class="lede">DECA mempertemukan kebutuhan pengguna, merchant, dan bisnis dengan layanan pembayaran yang saling terhubung.</p>
+    </div>
+    <div class="nodes">
+      <article class="node" data-od-id="node-konsumen"><p class="kicker">01 · KONSUMEN</p><h3>Bayar kebutuhan sehari-hari.</h3><p>Top up, transfer, tagihan, dan voucher digital.</p></article>
+      <article class="node" data-od-id="node-merchant"><p class="kicker">02 · MERCHANT</p><h3>Terima pembayaran lebih mudah.</h3><p>QRIS dan alat bantu kelola transaksi usaha.</p></article>
+      <article class="node" data-od-id="node-bisnis"><p class="kicker">03 · BISNIS</p><h3>Kelola alur pembayaran.</h3><p>API, virtual account, disbursement, dan rekonsiliasi.</p></article>
+      <article class="node" data-od-id="node-mitra"><p class="kicker">04 · MITRA</p><h3>Perluas konektivitas layanan keuangan.</h3><p>Jaringan dan infrastruktur untuk berbagai kebutuhan.</p></article>
+    </div>
+    <div class="methods" data-od-id="metode">
+      <span class="lbl">Jalur pembayaran</span>
+      <span class="chip">Bank</span><span class="chip">QRIS</span><span class="chip">BI-FAST</span>
+      <span class="chip">Virtual Account</span><span class="chip">E-Money</span><span class="chip">Payment Gateway</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRODUK ================= -->
+<section id="produk" data-od-id="produk" style="padding-top:0">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Portofolio DECA</p>
+      <h2 class="h2" data-od-id="produk-title">Dirancang untuk tiap cara bertransaksi.</h2>
+      <p class="lede">Tiga produk. Satu ekosistem. Pilih layanan yang sesuai dengan kebutuhanmu.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Produk DECA" data-od-id="produk-tabs">
+      <button class="tab" role="tab" id="tab-cash" aria-controls="panel-cash" aria-selected="true">01 · DECA Cash<small>Dompet digital</small></button>
+      <button class="tab" role="tab" id="tab-cashier" aria-controls="panel-cashier" aria-selected="false">02 · DECA for Merchant<small>QRIS &amp; merchant</small></button>
+      <button class="tab" role="tab" id="tab-business" aria-controls="panel-business" aria-selected="false">03 · DECA Business<small>Dashboard &amp; API</small></button>
+    </div>
+
+    <div class="panel" role="tabpanel" id="panel-cash" aria-labelledby="tab-cash" data-od-id="produk-cash">
+      <div class="panel-grid">
+        <div>
+          <p class="eyebrow">Untuk konsumen</p>
+          <h3>Semua kebutuhan digital, satu tempat.</h3>
+          <p class="lede">DECA Cash memudahkan kebutuhan transaksi harian lewat satu aplikasi.</p>
+          <ul class="checks">
+            <li>Top up dan transfer</li>
+            <li>Bayar tagihan dan pulsa</li>
+            <li>Voucher dan produk digital</li>
+          </ul>
+          <a class="link" href="#cash-detail">Kenali DECA Cash <i>↗</i></a>
+        </div>
+        <div class="panel-art">
+          <div class="plate"><img src="imagery/app-topup-4.png" width="680" height="782"
+            alt="Layar Topup Saldo DECA: pilihan nominal Rp 50.000 sampai Rp 1.000.000 dan panel Pilih Metode Transfer berisi BCA, Permata, dan Virtual Account Permata."></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="panel-cashier" aria-labelledby="tab-cashier" hidden data-od-id="produk-cashier">
+      <div class="panel-grid">
+        <div>
+          <p class="eyebrow">Untuk merchant</p>
+          <h3>Transaksi usaha lebih mudah dipantau.</h3>
+          <p class="lede">Terima pembayaran QRIS dan kelola aktivitas toko lewat DECA for Merchant.</p>
+          <ul class="checks">
+            <li>Terima pembayaran QRIS</li>
+            <li>Pantau transaksi usaha</li>
+            <li>Kelola profil merchant</li>
+          </ul>
+          <a class="link" href="#kontak">Tanya tentang DECA for Merchant <i>↗</i></a>
+        </div>
+        <div class="panel-art">
+          <div class="plate"><img src="imagery/app-transfer.png" width="680" height="782"
+            alt="Beranda aplikasi DECA dengan pintasan Transfer terpilih di antara Top Up, Transfer, Tarik Tunai, dan Riwayat."></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="panel-business" aria-labelledby="tab-business" hidden data-od-id="produk-business">
+      <div class="panel-grid">
+        <div>
+          <p class="eyebrow">Untuk bisnis &amp; institusi</p>
+          <h3>Kontrol pembayaran dalam satu dashboard.</h3>
+          <p class="lede">Hubungkan sistem bisnis dengan layanan pembayaran dan pantau operasional dari DECA Business.</p>
+          <ul class="checks">
+            <li>Payment API dan virtual account</li>
+            <li>Disbursement dan monitoring</li>
+            <li>Dashboard dan rekonsiliasi</li>
+          </ul>
+          <a class="link" href="#kontak">Bicara dengan tim bisnis <i>↗</i></a>
+        </div>
+        <div class="panel-art">
+          <div class="plate"><img src="imagery/app-kyc.png" width="680" height="782"
+            alt="Beranda aplikasi DECA dengan ajakan verifikasi akun dan tombol Verifikasi Akun."></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DECA CASH DETAIL ================= -->
+<section id="cash-detail" data-od-id="cash-detail" style="padding-top:0">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Di dalam DECA Cash</p>
+      <h2 class="h2" data-od-id="cash-detail-title">Fitur unggulan DECA untuk transaksi lebih mudah!</h2>
+      <p class="lede">Semua yang kamu butuhkan untuk bayar dan transfer, dalam satu aplikasi.</p>
+    </div>
+    <div class="grid grid-3">
+      <article class="card" data-od-id="fitur-topup"><div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>Top up</h3><p>Top up saldo DECA Cash sangat mudah, aman, dan tanpa biaya admin!</p></article>
+      <article class="card" data-od-id="fitur-pulsa"><div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M11 18h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>Pulsa &amp; PPOB</h3><p>Memudahkan kamu dalam bertransaksi pembelian pulsa, token PLN, dan voucher lainnya disini.</p></article>
+      <article class="card" data-od-id="fitur-keamanan"><div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div><h3>Keamanan Terjamin</h3><p>Selalu aman dan terlindungi, kami menjamin pembayaran dan data kamu 100% aman.</p></article>
+      <article class="card" data-od-id="fitur-transfer"><div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8h13M13 4l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16H7M11 12l-4 4 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Transfer antar bank</h3><p>Memudahkan kamu untuk melakukan transfer ke seluruh bank di Indonesia hanya dalam satu genggaman.</p></article>
+      <article class="card" data-od-id="fitur-tagihan"><div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8h6M9 12h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>Bayar Tagihan</h3><p>Disini tempat pembayaran semua tagihan-tagihan rutin bulanan kamu, seperti BPJS, Kartu Kredit, tagihan multipayment serta pembayaran e-commerce.</p></article>
+      <article class="card" data-od-id="fitur-cs"><div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 13a8 8 0 0116 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="3" y="13" width="4" height="6" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="17" y="13" width="4" height="6" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg></div><h3>Customer Support</h3><p>Customer Support kami siap membantumu menjawab segala kebutuhan kamu.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KATALOG ================= -->
+<section id="katalog" data-od-id="katalog" style="padding-top:0">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Channel pembayaran</p>
+      <h2 class="h2" data-od-id="katalog-title">Sekarang DECA mendukung banyak channel pembayaran PPOB &amp; Multipayment</h2>
+      <p class="lede">Pilih kategori untuk melihat layanan yang sudah aktif dan yang masih dalam tahap pengembangan.</p>
+    </div>
+
+    <div class="methods" style="border-top:0;padding-top:0;margin-top:0;margin-bottom:var(--s5)" role="group" aria-label="Filter kategori" data-od-id="filter">
+      <button class="chip" data-filter="all" aria-pressed="true" style="cursor:pointer;font-weight:700">Semua · 15</button>
+      <button class="chip" data-filter="pulsa" aria-pressed="false" style="cursor:pointer">Pulsa &amp; Data · 6</button>
+      <button class="chip" data-filter="energi" aria-pressed="false" style="cursor:pointer">Listrik &amp; Energi · 2</button>
+      <button class="chip" data-filter="internet" aria-pressed="false" style="cursor:pointer">Internet &amp; TV · 3</button>
+      <button class="chip" data-filter="kesehatan" aria-pressed="false" style="cursor:pointer">Kesehatan · 1</button>
+      <button class="chip" data-filter="dompet" aria-pressed="false" style="cursor:pointer">Dompet &amp; Transportasi · 2</button>
+      <button class="chip" data-filter="air" aria-pressed="false" style="cursor:pointer">Air · 1</button>
+    </div>
+    <p class="skip" id="svc-status" role="status" style="position:absolute;left:-9999px"></p>
+
+    <div class="grid grid-4" id="svc-grid" data-od-id="katalog-grid">
+      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Telkomsel</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Indosat Ooredoo</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>XL Axiata</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Tri (3)</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>AXIS</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Smartfren</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="energi"><p class="kicker">LISTRIK &amp; ENERGI</p><h3>PLN</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="energi"><p class="kicker">LISTRIK &amp; ENERGI</p><h3>PGN</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="air"><p class="kicker">AIR</p><h3>PDAM</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="internet"><p class="kicker">INTERNET &amp; TV</p><h3>IndiHome</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="internet"><p class="kicker">INTERNET &amp; TV</p><h3>Telkom</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="internet"><p class="kicker">INTERNET &amp; TV</p><h3>Speedy</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="kesehatan"><p class="kicker">KESEHATAN</p><h3>BPJS Kesehatan</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="dompet"><p class="kicker">DOMPET &amp; TRANSPORTASI</p><h3>Gojek</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="dompet"><p class="kicker">DOMPET &amp; TRANSPORTASI</p><h3>e-Money</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+    </div>
+    <p class="lede" id="svc-empty" hidden style="margin-top:var(--s4)">Belum ada layanan di kategori ini.</p>
+  </div>
+</section>
+
+<!-- ================= CARA PAKAI ================= -->
+<section id="cara-pakai" data-od-id="cara-pakai" style="padding-top:0">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Cara pakai</p>
+      <h2 class="h2" data-od-id="cara-title">Dari buka aplikasi sampai transaksi berhasil.</h2>
+      <p class="lede" style="margin-top:var(--s2)">Langkahnya sama persis dengan yang ada di aplikasi DECA.</p>
+      <div style="margin-top:var(--s5)">
+        <h3 style="font-size:17px;margin-bottom:var(--s3)">Top up DECA Cash</h3>
+        <ol class="steps">
+          <li><span>Buka Aplikasi DECA, pilih <strong>Topup Saldo</strong>.</span></li>
+          <li><span>Pilih metode topup <strong>Lainnya</strong>.</span></li>
+          <li><span>Pilih nominal secara instan atau ketik manual nominal yang kamu mau, lalu pilih <strong>LANJUT</strong>.</span></li>
+          <li><span>Pilih metode topup dengan <strong>Channel Pembayaran</strong> yang kamu inginkan.</span></li>
+          <li><span>Konfirmasi nominal dengan pilih <strong>KONFIRMASI &amp; TOPUP</strong>.</span></li>
+          <li><span>Ikuti instruksi <strong>SELANJUTNYA</strong> dan gunakan kode unik yang sudah tertera.</span></li>
+          <li><span>Setelah berhasil, kamu dapat notifikasi bahwa DECA Cash kamu sudah bertambah.</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="split-art">
+      <div class="plate"><img src="imagery/app-topup-4.png" width="680" height="782"
+        alt="Layar Topup Saldo DECA: pilihan nominal dan panel Pilih Metode Transfer dengan BCA, Permata, dan Virtual Account Permata."></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BIAYA ================= -->
+<section id="biaya" data-od-id="biaya" style="padding-top:0">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Biaya</p>
+      <h2 class="h2" data-od-id="biaya-title">Biaya top up, terbuka sejak awal</h2>
+      <p class="lede">Ini yang tampil di layar Pilih Metode Transfer aplikasi DECA. Tidak ada biaya yang disembunyikan.</p>
+    </div>
+    <div class="tw" data-od-id="biaya-table">
+      <table>
+        <caption class="skip" style="position:absolute;left:-9999px">Biaya top up saldo DECA Cash per channel</caption>
+        <thead><tr><th scope="col">Channel</th><th scope="col">Jenis</th><th scope="col">Biaya</th></tr></thead>
+        <tbody>
+          <tr><td><strong>BCA</strong></td><td>Bank Transfer</td><td><span class="badge badge-live">Gratis Topup</span></td></tr>
+          <tr><td><strong>Permata</strong></td><td>Bank Transfer</td><td><span class="badge badge-live">Gratis Topup</span></td></tr>
+          <tr><td><strong>Permata</strong></td><td>Virtual Account</td><td>Rp1.500</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="font-size:13px;margin-top:var(--s3)">Sumber: layar Pilih Metode Transfer pada aplikasi DECA. Biaya dapat berubah — cek nominal terakhir di aplikasi sebelum konfirmasi.</p>
+  </div>
+</section>
+
+<!-- ================= SOLUSI ================= -->
+<section id="solusi" data-od-id="solusi" style="padding-top:0">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Solusi untuk model bisnis yang berbeda</p>
+      <h2 class="h2" data-od-id="solusi-title">Satu infrastruktur. Banyak cara tumbuh.</h2>
+      <p class="lede">Pilih model bisnis yang paling dekat dengan kebutuhanmu, lalu temukan jalur pembayaran yang sesuai.</p>
+    </div>
+    <div class="grid grid-3">
+      <article class="solution" data-od-id="solusi-lending"><p class="kicker">01 · FINTECH</p><h3>Fintech lending</h3><p>Dukung pembayaran angsuran, pencairan dana, dan pemantauan transaksi pinjaman digital.</p></article>
+      <article class="solution" data-od-id="solusi-marketplace"><p class="kicker">02 · MARKETPLACE</p><h3>Marketplace</h3><p>Hubungkan alur pembayaran pelanggan dengan pengelolaan transaksi penjual dan mitra.</p></article>
+      <article class="solution" data-od-id="solusi-wallet"><p class="kicker">03 · PLATFORM DIGITAL</p><h3>Wallet &amp; super app</h3><p>Satukan pembayaran, transfer, isi saldo, dan layanan digital dalam pengalaman aplikasimu.</p></article>
+      <article class="solution" data-od-id="solusi-psp"><p class="kicker">04 · PEMBAYARAN</p><h3>PSP lintas negara</h3><p>Hubungkan bisnis global dengan metode pembayaran dan proses lokal di Indonesia.</p></article>
+      <article class="solution" data-od-id="solusi-commerce"><p class="kicker">05 · PERDAGANGAN</p><h3>Perdagangan lintas negara</h3><p>Terima pembayaran dari pelanggan Indonesia dan kelola alur settlement antar pasar.</p></article>
+      <article class="solution" data-od-id="solusi-growth"><p class="kicker">06 · BISNIS BERKEMBANG</p><h3>UMKM &amp; startup</h3><p>Mulai dari pembayaran praktis, lalu perluas layanan seiring bisnis bertumbuh.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TENTANG & KEAMANAN ================= -->
+<section id="tentang" data-od-id="tentang" style="padding-top:0">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Dibangun dengan tujuan yang jelas</p>
+      <h2 class="h2" data-od-id="tentang-title">Teknologi harus membuatnya lebih sederhana.</h2>
+      <p class="lede" style="margin-top:var(--s2)">DECA adalah perusahaan teknologi pembayaran yang membangun infrastruktur untuk menghubungkan manusia, usaha, dan layanan keuangan.</p>
+      <div class="stats">
+        <div><b>2022</b><small>DECA didirikan</small></div>
+        <div><b>2024</b><small>Berizin Bank Indonesia</small></div>
+        <div><b>Jakarta</b><small>Indonesia</small></div>
+      </div>
+      <p class="eyebrow" style="margin-top:var(--s5)">Keamanan DECA</p>
+      <div class="sec-list" style="margin-top:var(--s3)">
+        <div class="sec-item" data-od-id="sec-pin"><h4>Kode PIN</h4><p>Transaksi lebih aman dengan menggunakan PIN transaksi.</p></div>
+        <div class="sec-item" data-od-id="sec-2fa"><h4>Sistem Keamanan</h4><p>Akses akun DECA dilengkapi dengan 2FA verification (Google Authenticator), OTP, dan Biometric login (Fingerprint).</p></div>
+        <div class="sec-item" data-od-id="sec-data"><h4>Transaksi dan Data Pribadi Aman</h4><p>Aplikasi DECA memastikan semua transaksi dan data kamu aman mengikuti peraturan dari Kominfo (Perlindungan Data), dan mengikuti peraturan Bank Indonesia (BI).</p></div>
+      </div>
+    </div>
+    <div class="split-art">
+      <div class="arch"><img src="imagery/security-shield.png" width="906" height="1158"
+        alt="Layar Masukkan PIN aplikasi DECA dengan enam titik PIN, tombol Lupa PIN, papan angka, dan lambang gembok pada lingkaran hijau tua."></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq" data-od-id="faq" style="padding-top:0">
+  <div class="shell">
+    <div class="head">
+      <p class="eyebrow">Pertanyaan umum</p>
+      <h2 class="h2" data-od-id="faq-title">Yang sering ditanyakan.</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Apa itu DECA?<i>+</i></summary><div class="answer"><p>PT Delta Omega Beta (DECA) adalah perusahaan teknologi pembayaran yang membangun solusi digital untuk konsumen, merchant, bisnis, dan mitra di Indonesia.</p></div></details>
+      <details><summary>Produk apa saja yang dimiliki DECA?<i>+</i></summary><div class="answer"><p>DECA Cash untuk kebutuhan transaksi konsumen, DECA for Merchant untuk pembayaran dan pengelolaan merchant, serta DECA Business untuk dashboard dan integrasi pembayaran.</p></div></details>
+      <details><summary>Apakah top up DECA Cash dikenakan biaya admin?<i>+</i></summary><div class="answer"><p>Tidak. Top up saldo DECA Cash tanpa biaya admin. Untuk Bank Transfer lewat BCA dan Permata, aplikasi bahkan menandainya <strong>Gratis Topup</strong>. Virtual Account Permata dikenakan Rp1.500.</p></div></details>
+      <details><summary>Operator seluler apa saja yang sudah didukung?<i>+</i></summary><div class="answer"><p>Enam operator sudah aktif: Telkomsel, Indosat Ooredoo, XL Axiata, Tri, AXIS, dan Smartfren. Sembilan layanan tagihan lain seperti PLN, PDAM, BPJS Kesehatan, dan IndiHome masih berstatus segera hadir.</p></div></details>
+      <details><summary>Bagaimana cara mendaftar akun bisnis?<i>+</i></summary><div class="answer"><p>Mulai dari halaman pendaftaran DECA. Tim kami akan membantu mengarahkan kebutuhan dan langkah aktivasi akun bisnis.</p></div></details>
+      <details><summary>Apakah transaksi dan data pribadi saya aman?<i>+</i></summary><div class="answer"><p>Transaksi diamankan dengan PIN, dan akses akun dilengkapi 2FA verification (Google Authenticator), OTP, serta biometric login (fingerprint). Aplikasi DECA mengikuti peraturan Kominfo untuk perlindungan data dan peraturan Bank Indonesia.</p></div></details>
+      <details><summary>Bagaimana cara menghubungi customer support?<i>+</i></summary><div class="answer"><p>Email <a class="link" href="mailto:cs@deca.co.id" style="min-height:0">cs@deca.co.id</a> atau WhatsApp <a class="link" href="https://wa.me/628979513080" target="_blank" rel="noopener" style="min-height:0">0897 951 3080</a>. Jam layanan Senin–Jumat 08.00–20.00 dan Sabtu–Minggu 09.00–18.00.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KONTAK ================= -->
+<section class="band" id="kontak" data-od-id="kontak">
+  <div class="shell">
+    <div>
+      <p class="eyebrow">Mulai dari kebutuhan bisnismu</p>
+      <h2 class="h2" data-od-id="kontak-title">Ada transaksi yang ingin lebih terhubung?</h2>
+      <p class="lede">Ceritakan rencanamu. Kita cari cara yang tepat untuk mulai.</p>
+    </div>
+    <div class="band-actions">
+      <a class="btn btn-white" href="mailto:partnership@deca.co.id" data-od-id="cta-kontak">Mulai dengan DECA <span>↗</span></a>
+      <a class="tel" href="mailto:partnership@deca.co.id">atau email partnership@deca.co.id</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer" data-od-id="footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand" style="width:122px;height:39px"><img src="logos/deca-b2b-logo.png" alt="DECA" style="width:122px;height:122px;top:-41px"></div>
+        <p class="tagline">Powering Indonesia's Digital Payment Ecosystem.</p>
+        <p class="tagline" style="font-weight:400">Bayar apa aja, DECA tempatnya.</p>
+      </div>
+      <div>
+        <h3>Jelajahi</h3>
+        <ul>
+          <li><a href="#ekosistem">Ekosistem</a></li>
+          <li><a href="#produk">Produk</a></li>
+          <li><a href="#solusi">Solusi</a></li>
+          <li><a href="#tentang">Tentang DECA</a></li>
+          <li><a href="#katalog">Channel pembayaran</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Akun &amp; bantuan</h3>
+        <ul>
+          <li><a href="mailto:partnership@deca.co.id">partnership@deca.co.id</a></li>
+          <li><a href="tel:+628138361376">+62 813-8361-376 · partnership</a></li>
+          <li><a href="mailto:cs@deca.co.id">cs@deca.co.id</a></li>
+          <li><a href="https://wa.me/628979513080" target="_blank" rel="noopener">0897 951 3080 · customer support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> PT Delta Omega Beta · Jakarta, Indonesia</span>
+      <span>Gedung Arva Gondangdia Lantai 1, Jl. Rp. Soeroso No. 40 BC, Gondangdia, DKI Jakarta 10350</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var all = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  var burger = document.getElementById('burger'), mob = document.getElementById('nav-mobile');
+  if (burger && mob) {
+    burger.addEventListener('click', function () {
+      var open = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!open));
+      burger.setAttribute('aria-label', open ? 'Buka menu' : 'Tutup menu');
+      mob.classList.toggle('open', !open);
+    });
+    mob.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') { burger.setAttribute('aria-expanded', 'false'); mob.classList.remove('open'); }
+    });
+  }
+
+  var tabs = all('.tab[role="tab"]');
+  if (tabs.length) {
+    var pick = function (t) {
+      tabs.forEach(function (x) {
+        var on = x === t;
+        x.setAttribute('aria-selected', String(on));
+        var p = document.getElementById(x.getAttribute('aria-controls'));
+        if (p) p.hidden = !on;
+      });
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { pick(t); });
+      t.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowRight') n = tabs[(i + 1) % tabs.length];
+        if (e.key === 'ArrowLeft') n = tabs[(i - 1 + tabs.length) % tabs.length];
+        if (n) { e.preventDefault(); n.focus(); pick(n); }
+      });
+    });
+  }
+
+  var chips = all('.chip[data-filter]'), grid = document.getElementById('svc-grid');
+  if (chips.length && grid) {
+    var cards = all('[data-cat]', grid), empty = document.getElementById('svc-empty'), status = document.getElementById('svc-status');
+    chips.forEach(function (c) {
+      c.addEventListener('click', function () {
+        var want = c.getAttribute('data-filter'), shown = 0;
+        chips.forEach(function (x) { x.setAttribute('aria-pressed', String(x === c)); });
+        cards.forEach(function (k) {
+          var m = want === 'all' || k.getAttribute('data-cat') === want;
+          k.hidden = !m; if (m) shown++;
+        });
+        if (empty) empty.hidden = shown > 0;
+        if (status) status.textContent = 'Menampilkan ' + shown + ' dari ' + cards.length + ' layanan.';
+      });
+    });
+  }
+
+  all('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
+})();
+</script>
+</body>
+</html>

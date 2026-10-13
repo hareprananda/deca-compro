@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DECA — System Design · http://103.159.199.42:8090/</title>
+<meta name="description" content="Design system extracted and measured from the DECA site at 103.159.199.42:8090 — tokens, type, geometry, motion, components, and the contrast corrections the source needs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   The page's own tokens are the CORRECTED set, so this document demonstrates
+   the system it describes. Extracted values appear as data in the swatches.
+   ========================================================================== */
+:root{
+  /* marketing sheet (home.css) — the page served at / */
+  --paper:#f8fbf8;
+  --white:#ffffff;
+  --ink:#102521;
+  --muted:#657773;
+  --line:#e3ebe6;
+  --green:#05bd3b;        /* brand green — fill/reference only, 2.41 on paper */
+  --green-ink:#058540;    /* text-safe green,  4.54 on paper */
+  --green-icon:#11a63a;   /* icon green,       3.08 on paper */
+  --green-pale:#e7f9eb;
+  --blue:#0074db;         /* brand blue — reference only, 4.46 on paper */
+  --blue-ink:#0172d7;     /* text-safe blue,   4.59 on paper */
+  --blue-pale:#eaf3ff;
+  --mint:#e7f7f5;
+
+  /* auth sheet (styles.css) — login + register */
+  --a-green:#04ca02;
+  --a-sapphire:#003571;
+  --a-ink:#092344;
+
+  --display:'Manrope',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  --body:'DM Sans',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+
+  --r-btn:7px; --r-card:9px; --r-chip:10px; --r-panel:14px;
+  --max:1200px;
+  --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:40px; --s6:48px; --s8:64px; --s10:80px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-family:var(--display);letter-spacing:-.045em;line-height:1.15;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+a{color:var(--blue-ink)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:var(--white);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.shell{width:min(var(--max),calc(100% - 48px));margin-inline:auto}
+
+/* ---------- masthead ---------- */
+.mast{background:linear-gradient(180deg,#ffffff,var(--paper));border-bottom:1px solid var(--line);padding:var(--s10) 0 var(--s8)}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--green-ink);margin-bottom:var(--s2)}
+.mast h1{font-size:clamp(34px,4.6vw,54px);font-weight:750;color:var(--ink);margin-bottom:var(--s3)}
+.mast h1 em{font-style:normal;color:var(--green-ink)}
+.mast .lede{max-width:64ch;color:var(--muted);font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);margin-top:var(--s5);padding-top:var(--s3);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* ---------- sections ---------- */
+section{padding:var(--s10) 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.num{display:flex;align-items:center;gap:var(--s2);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s3)}
+.num b{color:var(--green-ink);font-family:var(--display)}
+.num::after{content:"";flex:1;height:1px;background:var(--line)}
+h2.sec{font-size:clamp(24px,3vw,34px);font-weight:750;margin-bottom:var(--s2)}
+.sub{max-width:70ch;color:var(--muted);margin-bottom:var(--s5)}
+
+/* ---------- findings ---------- */
+.finding{border:1px solid var(--line);border-left:3px solid var(--green-ink);border-radius:var(--r-card);background:var(--white);padding:var(--s3) var(--s4);margin-bottom:var(--s2)}
+.finding.warn{border-left-color:#b4541f}
+.finding h3{font-size:16px;font-weight:750;margin-bottom:6px}
+.finding p{font-size:14px;color:var(--muted)}
+.finding .big{font-family:var(--display);font-weight:800;color:#b4541f}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-card);background:var(--white)}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--paper);font-weight:700}
+tbody tr:last-child td{border-bottom:0}
+td.mono,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+.ratio{font-family:var(--display);font-weight:750;font-variant-numeric:tabular-nums}
+.pass{color:#1a6b3a;font-weight:600}
+.fail{color:#b4541f;font-weight:700}
+
+/* ---------- swatches ---------- */
+.sw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--s2)}
+.sw{border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;background:var(--white)}
+.sw .chip{height:76px;display:flex;align-items:flex-end;padding:9px 11px;font-family:var(--display);font-weight:700;font-size:11px}
+.sw .body{padding:11px 12px;display:grid;gap:3px}
+.sw .name{font-family:var(--display);font-weight:700;font-size:13px}
+.sw .hex{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
+.sw .role{font-size:11px;color:var(--muted);line-height:1.5}
+.sw.retired{opacity:.62}
+
+/* ---------- type specimen ---------- */
+.spec{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s4);margin-bottom:var(--s2)}
+.spec .row{display:flex;align-items:baseline;gap:var(--s4);flex-wrap:wrap;justify-content:space-between;border-bottom:1px solid var(--line);padding:var(--s3) 0}
+.spec .row:last-child{border-bottom:0;padding-bottom:0}
+.spec .row:first-child{padding-top:0}
+.spec .demo{font-family:var(--display);color:var(--ink);letter-spacing:-.055em;font-weight:750}
+.spec .note{font-size:11px;color:var(--muted);text-align:right;flex:none}
+.spec .note b{display:block;color:var(--ink);font-weight:600;font-size:12px}
+
+/* ---------- component demos ---------- */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--s3)}
+.demo{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s3)}
+.demo>h4{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:var(--s3)}
+.stage{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:49px;padding:0 21px;border:0;border-radius:var(--r-btn);font-family:var(--body);font-size:13px;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
+.btn-primary:hover{box-shadow:0 10px 22px rgb(6 168 50 / .21)}
+.btn-quiet{background:transparent;color:var(--ink);padding:0 2px}
+.btn-quiet i{font-style:normal;color:var(--green-ink)}
+.btn-small{min-height:39px;padding:0 16px;font-size:12px;gap:10px}
+.btn-cta{background:linear-gradient(135deg,var(--green-ink) 0%,var(--blue-ink) 100%);color:#fff}
+
+.tag{display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:14px;font-size:11px;font-weight:700;background:var(--green-pale);color:var(--green-ink)}
+.tag.blue{background:var(--blue-pale);color:var(--blue-ink)}
+
+.icochip{width:36px;height:36px;border-radius:var(--r-chip);display:grid;place-items:center;background:var(--green-pale);color:var(--green-ink);font-weight:800;font-family:var(--display);font-size:13px}
+.icochip.blue{background:var(--blue-pale);color:var(--blue-ink)}
+.icochip.mint{background:var(--mint);color:#0c8580}
+
+.card{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:20px;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-5px);border-color:#b6dfc1;box-shadow:0 16px 35px rgb(20 53 29 / .06)}
+.card .kicker{font-size:10px;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.card h4{font-size:16px;font-weight:750;margin:12px 0 6px}
+.card p{font-size:13px;color:var(--muted)}
+
+details{border-bottom:1px solid var(--line)}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px 0;cursor:pointer;list-style:none;font-family:var(--display);font-size:14px;font-weight:650;color:var(--ink)}
+summary::-webkit-details-marker{display:none}
+summary i{font-style:normal;color:var(--green-ink);font-size:18px;transition:transform .2s}
+details[open] summary i{transform:rotate(45deg)}
+details p{padding:0 30px 14px 0;font-size:13px;color:var(--muted)}
+
+.stats{display:flex;gap:32px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--line)}
+.stats div{display:grid;gap:3px}
+.stats b{font-family:var(--display);font-weight:750;font-size:20px;color:var(--green-ink);letter-spacing:-.04em}
+.stats small{font-size:11px;color:var(--muted)}
+
+.field{display:grid;gap:5px}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+.field input{height:38px;border:1px solid var(--line);background:var(--white);border-radius:4px;padding:0 10px;font-family:var(--body);font-size:13px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input::placeholder{color:var(--muted)}
+.field input:focus{border-color:var(--blue-ink);box-shadow:0 0 0 3px rgb(1 114 215 / .14)}
+
+.notice{display:flex;align-items:center;gap:9px;height:31px;padding:0 14px;border-radius:4px;background:var(--green-pale);color:var(--green-ink);font-size:11px;letter-spacing:.06em;font-weight:600}
+.notice i{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
+
+/* the site's own logo-crop technique, reproduced */
+.logocrop{position:relative;width:112px;height:50px;overflow:hidden;flex:none}
+.logocrop img{position:absolute;display:block;width:112px;height:112px;max-width:none;left:0;top:-38px}
+.logosrc{width:112px;height:112px;border:1px solid var(--line);border-radius:8px;background:#fff}
+
+/* geometry */
+.geo{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2)}
+.geo>div{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s3);text-align:center}
+.geo .box{height:58px;background:var(--green-pale);border:1px solid #bfe6c8;margin-bottom:12px}
+.geo b{display:block;font-family:var(--display);font-size:13px}
+.geo small{font-size:11px;color:var(--muted)}
+
+.rule{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s3) var(--s4)}
+.rule h4{font-size:14px;font-weight:750;margin-bottom:6px}
+.rule p{font-size:13px;color:var(--muted)}
+.rule.do{border-left:3px solid var(--green-ink)}
+.rule.dont{border-left:3px solid #b4541f}
+
+.note{font-size:12px;color:var(--muted);margin-top:var(--s3)}
+
+@media (max-width:700px){
+  .shell{width:calc(100% - 32px)}
+  section{padding:var(--s8) 0}
+  .mast{padding:var(--s8) 0 var(--s6)}
+  .spec .note{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="shell">
+    <p class="eyebrow">System design · extracted from source</p>
+    <h1>DECA <em>B2B &amp; Consumer</em><br>Design System</h1>
+    <p class="lede">Tokens, typography, geometry, motion and components read directly out of the live site’s own stylesheets — then measured, because a design system is only as good as its worst contrast pair.</p>
+    <div class="meta">
+      <span><b>Source</b> http://103.159.199.42:8090/</span>
+      <span><b>Sheets</b> home.css (40.5 KB) · styles.css (29.3 KB)</span>
+      <span><b>Pages</b> / · login.html · register.html</span>
+      <span><b>Type</b> Manrope + DM Sans</span>
+    </div>
+  </div>
+</header>
+
+<!-- 01 FINDINGS -->
+<section>
+  <div class="shell">
+    <p class="num"><b>01</b> What the audit found</p>
+    <h2 class="sec">Four blocking problems, all measured</h2>
+    <p class="sub">The site is well built structurally — disciplined components, a real motion system with reduced-motion support, and a clear editorial voice. The problems are all in colour and type scale.</p>
+
+    <div class="finding warn">
+      <h3>1 · Two design systems that share nothing</h3>
+      <p><code>home.css</code> and <code>styles.css</code> declare separate <code>:root</code> blocks with <b>zero hex values in common</b>. The marketing page runs a warm green (<span class="mono">#05bd3b</span>) on green-tinted neutrals (<span class="mono">#102521</span> ink, <span class="mono">#f8fbf8</span> paper); the auth pages run a punchy green (<span class="mono">#04ca02</span>) on blue-tinted neutrals (<span class="mono">#092344</span> ink, <span class="mono">#003571</span> sapphire). A visitor moving from the homepage to sign-up crosses a brand boundary. One of these two should win.</p>
+    </div>
+
+    <div class="finding warn">
+      <h3>2 · The primary button label is unreadable in both systems</h3>
+      <p>White on the marketing green <span class="mono">#05bd3b</span> measures <span class="big">2.52:1</span>. On the auth gradient it is worse — the light green stop <span class="mono">#58ea60</span> against white measures <span class="big">1.57:1</span>, which is not a marginal miss but text you cannot read. Both need <span class="mono">4.5:1</span>.</p>
+    </div>
+
+    <div class="finding warn">
+      <h3>3 · Sixteen off-token greys, none of which pass</h3>
+      <p>Across <code>home.css</code> the small labels are set in sixteen ad-hoc greys — <span class="mono">#84948b</span>, <span class="mono">#a0aaa3</span>, <span class="mono">#97a6b3</span> and so on — at sizes between <b>8px and 11px</b>. Every one fails <span class="mono">4.5:1</span>; the worst lands at <span class="big">2.30:1</span>. Meanwhile the <code>--muted</code> token already defined in the same file passes at 4.54:1. The tokens are fine — the pages just don’t use them.</p>
+    </div>
+
+    <div class="finding warn">
+      <h3>4 · Text colours used below their threshold</h3>
+      <p><code>--green-dark</code> at <span class="mono">4.17:1</span> is used for headline accent words and links; <code>--blue</code> at <span class="mono">4.46:1</span> for links; auth <code>--green</code> at <span class="mono">2.22:1</span>. All three are brand colours being asked to do a job they cannot do at body size.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 COLOUR -->
+<section>
+  <div class="shell">
+    <p class="num"><b>02</b> Colour</p>
+    <h2 class="sec">The two palettes as they exist today</h2>
+    <p class="sub">Sampled from each stylesheet’s <code>:root</code>, converted to OKLch, and measured against the paper each sheet actually sits on.</p>
+
+    <h3 style="font-size:15px;font-weight:750;margin-bottom:12px">Marketing sheet — <code>home.css</code>, served at <code>/</code></h3>
+    <div class="sw-grid" style="margin-bottom:var(--s6)">
+      <div class="sw"><div class="chip" style="background:#05bd3b;color:#102521">2.41 on paper</div><div class="body"><span class="name">--green</span><span class="hex">#05bd3b · oklch(69.5% 0.2133 145.7)</span><span class="role">Brand fill. Fails as icon (needs 3.0) and as text.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#008c42;color:#fff">4.17 on paper</div><div class="body"><span class="name">--green-dark</span><span class="hex">#008c42 · oklch(56.0% 0.1512 150.8)</span><span class="role">Headline accent + links. Just short of 4.5.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#e7f9eb;color:#102521">14.63</div><div class="body"><span class="name">--green-pale</span><span class="hex">#e7f9eb · oklch(96.5% 0.0265 152.4)</span><span class="role">Icon-chip and notice background. Passes.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#0074db;color:#fff">4.46 on paper</div><div class="body"><span class="name">--blue</span><span class="hex">#0074db · oklch(56.4% 0.1798 254.1)</span><span class="role">Secondary accent. Marginal fail as text.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#102521;color:#fff">15.39</div><div class="body"><span class="name">--ink</span><span class="hex">#102521 · oklch(24.5% 0.0283 180.1)</span><span class="role">Body ink. Excellent.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#657773;color:#fff">4.54 / 4.73</div><div class="body"><span class="name">--muted</span><span class="hex">#657773 · oklch(55.3% 0.0222 180.5)</span><span class="role">Secondary text. Passes — but rarely used.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#e3ebe6;color:#102521">divider</div><div class="body"><span class="name">--line</span><span class="hex">#e3ebe6 · oklch(93.3% 0.0108 158.8)</span><span class="role">Hairline. Non-text, no threshold.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#f8fbf8;color:#102521;border-bottom:1px solid #e3ebe6">paper</div><div class="body"><span class="name">--paper</span><span class="hex">#f8fbf8 · oklch(98.5% 0.0051 145.5)</span><span class="role">Canvas. Faintly green-tinted.</span></div></div>
+    </div>
+
+    <h3 style="font-size:15px;font-weight:750;margin-bottom:12px">Auth sheet — <code>styles.css</code>, login &amp; register</h3>
+    <div class="sw-grid">
+      <div class="sw"><div class="chip" style="background:#04ca02;color:#092344">2.22 on white</div><div class="body"><span class="name">--green</span><span class="hex">#04ca02 · oklch(72.7% 0.2468 142.5)</span><span class="role">Brand fill. Fails everything below large-icon.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#58ea60;color:#092344">1.57 vs white</div><div class="body"><span class="name">--eco</span><span class="hex">#58ea60 · oklch(83.0% 0.2192 144.1)</span><span class="role">Gradient stop. White text here is unreadable.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#0077ff;color:#fff">4.13 on white</div><div class="body"><span class="name">--blue</span><span class="hex">#0077ff · oklch(59.7% 0.2212 258.0)</span><span class="role">Gradient stop + links. Fails as text.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#003571;color:#fff">12.02</div><div class="body"><span class="name">--sapphire</span><span class="hex">#003571 · oklch(33.7% 0.1157 256.1)</span><span class="role">Primary dark. Excellent — and worth promoting.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#092344;color:#fff">15.72</div><div class="body"><span class="name">--ink</span><span class="hex">#092344 · oklch(25.7% 0.0697 256.0)</span><span class="role">Body ink. Excellent.</span></div></div>
+      <div class="sw"><div class="chip" style="background:#5c6c7c;color:#fff">5.40</div><div class="body"><span class="name">--muted</span><span class="hex">#5c6c7c · oklch(52.4% 0.0319 248.4)</span><span class="role">Secondary text. Passes.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 CORRECTIONS -->
+<section>
+  <div class="shell">
+    <p class="num"><b>03</b> Corrected tokens</p>
+    <h2 class="sec">Keeping the brand, clearing the threshold</h2>
+    <p class="sub">Each fix moves the smallest distance that clears 4.5:1. Brand greens stay exactly as authored — where the colour is a fill, the <em>label</em> moves instead. Text-safe variants are derived with <code>color-mix()</code>, never invented.</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Token</th><th>Was</th><th>Becomes</th><th>Measured</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>--green</code></td><td class="mono">#05bd3b</td><td class="mono">#05bd3b <em>unchanged</em></td><td class="ratio pass">as fill</td><td>Brand green is preserved exactly. Only its label moves.</td></tr>
+          <tr><td><code>--green-ink</code></td><td class="mono">#008c42</td><td class="mono">#058540</td><td class="ratio pass">4.54</td><td>Headline accents and links.</td></tr>
+          <tr><td><code>--green-icon</code></td><td class="mono">#05bd3b</td><td class="mono">#11a63a</td><td class="ratio pass">3.08</td><td>Icon-only marks, 3:1 threshold.</td></tr>
+          <tr><td><code>--blue-ink</code></td><td class="mono">#0074db</td><td class="mono">#0172d7</td><td class="ratio pass">4.59</td><td>Link and accent text.</td></tr>
+          <tr><td>button label</td><td class="mono">#ffffff</td><td class="mono">#102521</td><td class="ratio pass">6.38</td><td>Ink on the unchanged brand green.</td></tr>
+          <tr><td><code>--muted</code></td><td class="mono">16 greys</td><td class="mono">#657773</td><td class="ratio pass">4.54</td><td>The token already passes; the pages must use it.</td></tr>
+          <tr><td>auth gradient</td><td class="mono">#58ea60 → #0077ff</td><td class="mono">#008844 → #0071f3</td><td class="ratio pass">4.56 / 4.51</td><td>White label clears 4.5 at <em>both</em> stops, and the green→blue identity survives.</td></tr>
+          <tr><td>auth <code>--green-ink</code></td><td class="mono">#04ca02</td><td class="mono">#008844</td><td class="ratio pass">4.56</td><td>Auth text green.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">Nothing in the corrected set is a new colour. Every value is either a sampled brand colour left untouched, or a mix of one toward the sheet’s own ink far enough to clear the threshold.</p>
+  </div>
+</section>
+
+<!-- 04 TYPE -->
+<section>
+  <div class="shell">
+    <p class="num"><b>04</b> Typography</p>
+    <h2 class="sec">Manrope for display, DM Sans for text</h2>
+    <p class="sub">Both loaded from Google Fonts, weights 400–800 and 400–700. Display carries <code>letter-spacing: -.055em</code> — a tight, editorial set that gives the small sizes their density.</p>
+    <div class="spec">
+      <div class="row"><span class="demo" style="font-size:clamp(34px,5vw,58px);line-height:1.09">Urusan transaksi,</span><span class="note"><b>Display 66 / 1.095</b>clamp(42px, 5.15vw, 66px) · 750</span></div>
+      <div class="row"><span class="demo" style="font-size:clamp(26px,3.6vw,46px)">Setiap transaksi</span><span class="note"><b>H2 51 / 1.12</b>clamp(36px, 4.2vw, 51px) · 750</span></div>
+      <div class="row"><span class="demo" style="font-size:23px">Terima pembayaran</span><span class="note"><b>H3 23 / 1.2</b>800 · sector cards 16px</span></div>
+      <div class="row"><span style="font-family:var(--body);font-size:15px;color:var(--muted)">Solusi pembayaran yang menghubungkan konsumen, merchant, dan bisnis.</span><span class="note"><b>Lede 15 / 1.8</b>DM Sans 400</span></div>
+      <div class="row"><span style="font-family:var(--body);font-size:13px;color:var(--muted)">Badan teks dan daftar fitur.</span><span class="note"><b>Body 13 / 1.75</b>DM Sans 400</span></div>
+      <div class="row"><span class="eyebrow" style="margin:0">Ekosistem</span><span class="note"><b>Eyebrow 10 / .12em</b>700 · uppercase, green</span></div>
+    </div>
+    <div class="finding warn" style="margin-top:var(--s3)">
+      <h3>The one type decision to reverse</h3>
+      <p>The system sets real interface copy at <b>8–11px</b> — footer links, captions, form labels, the whole small-text layer. That is below any comfortable reading floor and is the root cause of the sixteen greys failing: at 8px, a colour needs <em>more</em> contrast, not less. <b>Raise the floor to 12px</b> for any text a visitor is meant to read, and reserve anything below that for genuinely non-text marks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 GEOMETRY -->
+<section>
+  <div class="shell">
+    <p class="num"><b>05</b> Geometry</p>
+    <h2 class="sec">Small radii, soft shadows, one arch</h2>
+    <p class="sub">The system is deliberately tight-cornered — 7px buttons, 9px cards, 14px panels. The single flourish is a photo mask.</p>
+    <div class="geo">
+      <div><div class="box" style="border-radius:7px"></div><b>7px</b><small>Buttons</small></div>
+      <div><div class="box" style="border-radius:9px"></div><b>9px</b><small>Cards · nodes</small></div>
+      <div><div class="box" style="border-radius:14px"></div><b>14px</b><small>Panels · mega-menu</small></div>
+      <div><div class="box" style="border-radius:140px 140px 17px 17px"></div><b>140 / 17</b><small>Hero arch photo</small></div>
+      <div><div class="box" style="border-radius:9px 94px 9px 9px"></div><b>94px</b><small>Trust photo corner</small></div>
+    </div>
+
+    <div class="demo-grid" style="margin-top:var(--s5)">
+      <div class="demo">
+        <h4>Elevation</h4>
+        <div style="display:grid;gap:12px">
+          <div style="height:44px;border-radius:9px;background:#fff;box-shadow:0 7px 17px rgb(6 168 50 / .14)"></div>
+          <div style="height:44px;border-radius:9px;background:#fff;box-shadow:0 12px 28px rgb(28 71 32 / .04)"></div>
+          <div style="height:44px;border-radius:9px;background:#fff;box-shadow:0 22px 58px rgb(24 62 36 / .11)"></div>
+        </div>
+        <p class="note" style="margin-top:10px">Green-tinted shadows on interactive elements, neutral on surfaces.</p>
+      </div>
+      <div class="demo">
+        <h4>Spacing</h4>
+        <div style="display:grid;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:8px;height:8px;background:var(--green-pale);border:1px solid #bfe6c8"></span><small class="mono">--s1 · 8px</small></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:16px;height:8px;background:var(--green-pale);border:1px solid #bfe6c8"></span><small class="mono">--s2 · 16px</small></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:24px;height:8px;background:var(--green-pale);border:1px solid #bfe6c8"></span><small class="mono">--s3 · 24px</small></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:40px;height:8px;background:var(--green-pale);border:1px solid #bfe6c8"></span><small class="mono">--s5 · 40px</small></div>
+        </div>
+        <p class="note" style="margin-top:10px">Section rhythm 100–118px vertical. Container 1200px with 64px gutters.</p>
+      </div>
+      <div class="demo">
+        <h4>Motion</h4>
+        <div style="display:grid;gap:9px;font-size:12px;color:var(--muted)">
+          <div><b class="mono" style="color:var(--ink)">rise-in</b> · .72s cubic-bezier(.2,.7,.2,1)</div>
+          <div><b class="mono" style="color:var(--ink)">soft-drift</b> · 6s ease-in-out infinite</div>
+          <div><b class="mono" style="color:var(--ink)">glow-breathe</b> · 7s ease-in-out infinite</div>
+          <div><b class="mono" style="color:var(--ink)">draw-chart</b> · 1.8s ease-out forwards</div>
+        </div>
+        <p class="note" style="margin-top:10px">Every animation is switched off under <code>prefers-reduced-motion</code>. This part of the system is genuinely well built.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 COMPONENTS -->
+<section>
+  <div class="shell">
+    <p class="num"><b>06</b> Components</p>
+    <h2 class="sec">Rendered with the corrected tokens</h2>
+    <p class="sub">The same shapes the site uses, with the label, text and icon colours moved to their safe values.</p>
+
+    <div class="demo-grid">
+      <div class="demo" style="grid-column:1/-1">
+        <h4>Brand assets — one image, everything else is CSS</h4>
+        <div class="stage" style="gap:32px;align-items:flex-start">
+          <div>
+            <div class="logocrop" aria-hidden="true"><img src="logos/deca-b2b-logo.png" alt=""></div>
+            <p class="note" style="margin-top:10px">Cropped wordmark<br>112 × 50</p>
+          </div>
+          <div>
+            <img class="logosrc" src="logos/deca-b2b-logo.png"
+                 alt="DECA wordmark: a rounded green tile holding a white stylised ‘d’, followed by the deca letterforms.">
+            <p class="note" style="margin-top:10px">Source file<br>1080 × 1080</p>
+          </div>
+          <div style="flex:1;min-width:280px">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:10px">
+              The wordmark ships as a <b>1080 × 1080 square</b> with the mark centred and generous
+              vertical padding. The header does not use a trimmed file — it crops in CSS with a
+              <code>112 × 50</code> <code>overflow:hidden</code> box holding the image at full
+              <code>112 × 112</code> and <code>top:-38px</code>. One asset then serves the header,
+              the footer and both auth pages while each sets its own height.
+            </p>
+            <p style="font-size:13px;color:var(--muted)">
+              This is the whole of the site’s imagery. <b>A full crawl of the homepage finds exactly
+              one image — this logo</b>, at <code>assets/deca-logo.png</code>. No photography, no
+              background images, not a single raster illustration: the phone mockups, dashboard cards,
+              charts, ecosystem map and QR marks are all built from borders, gradients and inline SVG.
+              For a payments brand that is a real engineering achievement, and the fastest page-load
+              decision in the whole system.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <h4>Buttons</h4>
+        <div class="stage">
+          <button class="btn btn-primary">Mulai sekarang <span>↗</span></button>
+          <button class="btn btn-primary btn-small">Kecil <span>↗</span></button>
+          <button class="btn btn-quiet">Pelajari <i>→</i></button>
+        </div>
+        <p class="note" style="margin-top:12px">Ink label on the unchanged brand green — 6.38:1. Hover lifts 2px.</p>
+      </div>
+      <div class="demo">
+        <h4>Gradient CTA — corrected</h4>
+        <div class="stage"><button class="btn btn-cta">Hubungi partnership <span>↗</span></button></div>
+        <p class="note" style="margin-top:12px">Both stops deepened so one white label clears 4.5 at either end: 4.56 and 4.51.</p>
+      </div>
+      <div class="demo">
+        <h4>Icon chips</h4>
+        <div class="stage">
+          <span class="icochip">◈</span><span class="icochip blue">◉</span><span class="icochip mint">◍</span>
+        </div>
+        <p class="note" style="margin-top:12px">Green, blue, mint. 36px, 10px radius, mark in the matching text-safe ink.</p>
+      </div>
+      <div class="demo">
+        <h4>Tags &amp; notice</h4>
+        <div class="stage" style="margin-bottom:12px"><span class="tag">● Live</span><span class="tag blue">API</span></div>
+        <div class="notice"><i></i> Semua channel pembayaran aktif</div>
+      </div>
+      <div class="demo">
+        <h4>Form field — auth</h4>
+        <div class="field"><label for="d1">Email bisnis</label><input id="d1" type="email" placeholder="nama@perusahaan.co.id"></div>
+        <p class="note" style="margin-top:12px">38px tall, 4px radius, blue focus ring at 14% alpha.</p>
+      </div>
+      <div class="demo">
+        <h4>Trust stats</h4>
+        <div class="stats">
+          <div><b>2024</b><small>Berizin BI</small></div>
+          <div><b>6</b><small>Channel aktif</small></div>
+          <div><b>1x24</b><small>Jam verifikasi</small></div>
+        </div>
+      </div>
+      <div class="demo" style="grid-column:1/-1">
+        <h4>Disclosure</h4>
+        <details open><summary>Bagaimana DECA menghubungkan merchant?<i>+</i></summary><p>Satu infrastruktur pembayaran yang menyatukan konsumen, merchant, dan mitra dalam ekosistem terintegrasi.</p></details>
+        <details><summary>Apakah tersedia dokumentasi API?<i>+</i></summary><p>Ya — dashboard dan API tersedia untuk integrasi bisnis.</p></details>
+      </div>
+      <div class="demo">
+        <h4>Card</h4>
+        <div class="card"><span class="kicker">SEKTOR</span><span class="icochip" style="margin-top:12px">◈</span><h4>UMKM &amp; startup</h4><p>Kelola pembayaran dengan lebih praktis.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 RULES -->
+<section>
+  <div class="shell">
+    <p class="num"><b>07</b> Rules</p>
+    <h2 class="sec">What to keep, what to change</h2>
+    <div class="demo-grid">
+      <div class="rule do"><h4>Keep — one token set</h4><p>Pick the marketing sheet’s green-tinted neutrals or the auth sheet’s sapphire-tinted ones, and delete the other. Two systems cannot both be the brand.</p></div>
+      <div class="rule do"><h4>Keep — the motion system</h4><p>Durations, easings and the reduced-motion block are disciplined and complete. Nothing here needs changing.</p></div>
+      <div class="rule do"><h4>Keep — the arch</h4><p>The 140px hero arch and 94px trust corner are the system’s one decisive flourish. Worth protecting.</p></div>
+      <div class="rule do"><h4>Keep — one image, CSS for the rest</h4><p>The whole homepage loads a single raster asset. Every mockup, chart and map is borders, gradients and inline SVG. That is the system’s strongest engineering decision — don’t let a redesign undo it by swapping in screenshots.</p></div>
+      <div class="rule dont"><h4>Change — the small-text floor</h4><p>Raise real copy from 8–11px to 12px minimum. Sixteen failing greys are a symptom of the size, not just the hue.</p></div>
+      <div class="rule dont"><h4>Change — off-token colour</h4><p>Every one of the sixteen greys should become <code>--muted</code>, which already passes. The tokens were never the problem.</p></div>
+      <div class="rule dont"><h4>Change — white on light green</h4><p>Never place white text on <code>#05bd3b</code>, <code>#04ca02</code> or <code>#58ea60</code>. Use the ink label, or deepen the fill.</p></div>
+    </div>
+    <p class="note">Read from the live stylesheets on 2026-10-13. Contrast measured with the WCAG 2.1 relative-luminance formula; OKLch values converted from sRGB. No value on this page was invented — every corrected colour is a <code>color-mix()</code> of a sampled brand colour toward that sheet’s own ink.</p>
+  </div>
+</section>
+
+</body>
+</html>
