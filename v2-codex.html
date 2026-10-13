@@ -115,6 +115,14 @@ section{padding:var(--s10) 0}
 .arch{border-radius:110px 110px 12px 12px;overflow:hidden;border:1px solid var(--line);background:var(--white)}
 .arch img{width:100%;height:auto}
 
+/* Two-column splits. The column ratio lives in the 900px block below, but
+   display:grid has to be declared here or the ratio is inert and the two
+   halves stack full-width. The art is capped so the tall portrait
+   screenshots cannot dominate the page. */
+.split{display:grid;gap:var(--s5)}
+.split-art{width:100%;max-width:440px;justify-self:center}
+.split-art img{width:100%;height:auto}
+
 /* ---------- nodes ---------- */
 .nodes{display:grid;gap:var(--s2)}
 .node{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s3);transition:transform .25s,box-shadow .25s,border-color .25s}
