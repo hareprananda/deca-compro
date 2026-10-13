@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daftar akun bisnis — DECA</title>
+<meta name="description" content="Mulai pendaftaran akun bisnis DECA. Tiga langkah: kontak, bisnis, selesai. Tim CS DECA meninjau setiap permintaan.">
+<meta name="theme-color" content="#f8fbf8">
+<link rel="icon" href="logos/deca-b2b-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   DECA v2-codex · register
+   The same system as v2-codex.html, at the scale of one task. Three steps,
+   one column, and an aside that carries the source's arch portrait and its
+   oversized backdrop letterform.
+   ========================================================================== */
+:root{
+  --paper:#f8fbf8;
+  --white:#ffffff;
+  --ink:#102521;
+  --muted:#657773;
+  --line:#e3ebe6;
+  --green:#05bd3b;        /* brand fill, 2.41 on paper — never text */
+  --green-ink:#08803f;    /* 4.83 on paper, 5.04 on white */
+  --green-icon:#11a63a;
+  --green-pale:#e7f9eb;
+  --blue-ink:#0168c8;     /* 5.50 on white */
+  --danger:#b3261e;       /* 6.68 on white, 5.84 on danger-pale */
+  --danger-pale:#fdeceb;
+  --muted-deep:#4f635c;   /* 5.82 on green-pale — --muted only reaches 4.25 there */
+  --on-dark:#cdf0d6;      /* 9.8 on the caption scrim */
+  --scrim:#092016;
+  --line-hover:#a9bdb4;
+  --display:'Manrope',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  --body:'DM Sans',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  /* The shared radius scale, kept whole even though this page only uses two
+     of the four, so the two v2-codex files read as one system. */
+  --r-btn:7px; --r-card:9px; --r-chip:10px; --r-panel:14px;
+  --r-arch:7px 120px 7px 7px;
+  --spring:cubic-bezier(.22,1,.36,1);
+  --s2:16px; --s3:24px; --s4:32px; --s5:40px; --s6:48px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:750;letter-spacing:-.055em;line-height:1.12;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+a{color:inherit;text-decoration:none}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--blue-ink);outline-offset:2px;border-radius:5px}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:12px;z-index:60;background:var(--white);padding:10px 16px;border-radius:var(--r-btn);border:1px solid var(--line);font-weight:700}
+
+/* ---------- entrance ---------- */
+@property --en-x{syntax:"<length>";inherits:false;initial-value:0px}
+@property --en-y{syntax:"<length>";inherits:false;initial-value:20px}
+@keyframes enter{from{opacity:0;translate:var(--en-x) var(--en-y)}to{opacity:1;translate:0 0}}
+@keyframes halo{0%{scale:.85;opacity:.5}70%,100%{scale:1.7;opacity:0}}
+@keyframes sheen{0%{translate:-130% 0}55%,100%{translate:150% 0}}
+@keyframes pop{from{scale:.6;opacity:0}to{scale:1;opacity:1}}
+html.js [data-reveal]{opacity:0}
+html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(--delay,0ms) both}
+
+/* ---------- header ---------- */
+.auth-head{height:71px;display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  padding:0 max(calc((100% - 1280px)/2),24px);background:var(--white);border-bottom:1px solid var(--line)}
+.brand{position:relative;width:104px;height:46px;overflow:hidden;flex:none}
+.brand img{position:absolute;width:104px;height:104px;max-width:none;left:0;top:-35px}
+.head-back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted);
+  min-height:44px;transition:color .2s}
+.head-back:hover{color:var(--green-ink)}
+
+/* ---------- layout ---------- */
+.auth-layout{min-height:calc(100vh - 71px);display:grid;grid-template-columns:1fr}
+@media (min-width:1000px){ .auth-layout{grid-template-columns:.86fr 1.14fr} }
+
+/* ---------- aside ---------- */
+.auth-aside{position:relative;overflow:hidden;background:var(--green-pale);padding:var(--s6) var(--s5) var(--s5)}
+@media (min-width:1000px){ .auth-aside{padding:44px var(--s3) 48px 5vw} }
+.aside-in{position:relative;z-index:1;max-width:470px}
+.aside-photo{position:relative;margin:0;overflow:hidden;border-radius:var(--r-arch);
+  aspect-ratio:4/3;box-shadow:0 20px 55px rgb(22 59 39 / .16);border:1px solid var(--line)}
+.aside-photo img{width:100%;height:100%;object-fit:cover}
+.aside-scrim{position:absolute;inset:34% 0 0;
+  background:linear-gradient(0deg,color-mix(in oklab,var(--scrim) 90%,transparent),transparent)}
+.aside-caption{position:absolute;left:24px;right:22px;bottom:22px;display:grid;gap:7px;color:var(--white)}
+.aside-caption small{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--on-dark)}
+.aside-caption b{font-family:var(--display);font-weight:750;font-size:clamp(24px,2.6vw,32px);letter-spacing:-.05em;line-height:1.1}
+.aside-caption i{font-style:normal;font-size:10px;letter-spacing:.13em;color:var(--on-dark)}
+.aside-benefits{display:flex;flex-wrap:wrap;gap:10px var(--s3);margin-top:var(--s4)}
+.aside-benefits li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-deep)}
+.aside-benefits i{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:var(--white);color:var(--green-ink);font-size:10px;font-style:normal;font-weight:700}
+.aside-mark{position:absolute;right:-56px;bottom:-150px;color:var(--white);opacity:.55;
+  font-family:var(--display);font-weight:800;font-size:400px;line-height:.8;letter-spacing:-.15em;pointer-events:none;user-select:none}
+@media (max-width:999px){ .aside-mark{display:none} }
+
+/* ---------- main / form ---------- */
+.auth-main{display:flex;justify-content:center;padding:var(--s6) var(--s3) var(--s5)}
+@media (min-width:1000px){ .auth-main{padding:52px var(--s5) var(--s5)} }
+.auth-panel{width:min(100%,540px)}
+.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--green-ink);margin-bottom:12px}
+.auth-panel h1{font-size:clamp(32px,3.6vw,44px)}
+.auth-panel .lede{margin:12px 0 var(--s5);color:var(--muted);max-width:48ch}
+
+/* progress */
+.progress{margin-bottom:var(--s5)}
+.track{height:3px;border-radius:4px;background:var(--line);overflow:hidden}
+.track span{display:block;height:100%;width:33.333%;border-radius:4px;
+  background:linear-gradient(90deg,var(--green-ink),var(--blue-ink));
+  transition:width .5s var(--spring)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px}
+.step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);transition:color .3s}
+.step:nth-child(2){justify-content:center}
+.step:last-child{justify-content:flex-end}
+.step b{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;flex:none;
+  border:1px solid var(--line);font-size:10px;font-weight:700;font-family:var(--display);
+  background:var(--white);color:var(--muted);transition:background .3s,color .3s,border-color .3s}
+.step[data-state="current"]{color:var(--ink);font-weight:700}
+.step[data-state="current"] b{border-color:var(--green-ink);background:var(--green-pale);color:var(--green-ink)}
+.step[data-state="done"]{color:var(--ink)}
+.step[data-state="done"] b{background:var(--green-ink);border-color:var(--green-ink);color:var(--white)}
+
+/* steps panels */
+.form-step{display:grid;gap:var(--s3)}
+.form-step[hidden]{display:none}
+.step-head{display:grid;grid-template-columns:34px 1fr;gap:var(--s2);margin-bottom:6px}
+.step-head>span{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.05em;color:var(--green-pale);
+  -webkit-text-stroke:1px var(--green-icon);line-height:1}
+.step-head h2{font-size:19px;margin-bottom:5px}
+.step-head p{font-size:13px;color:var(--muted)}
+
+.field{display:grid;gap:7px}
+.field>span{font-size:13px;font-weight:700;color:var(--ink)}
+.field input,.field select{width:100%;min-height:50px;padding:0 15px;border:1px solid var(--line);
+  border-radius:var(--r-btn);background:var(--white);color:var(--ink);font:inherit;font-size:15px;
+  transition:border-color .2s,box-shadow .2s}
+/* Placeholders are text, so they hold the same 4.5:1 the body does. The
+   "Contoh:" prefix on each is what marks them as hints rather than values. */
+.field input::placeholder{color:var(--muted)}
+.field input:hover,.field select:hover{border-color:var(--line-hover)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green-ink);box-shadow:0 0 0 3px var(--green-pale)}
+.field input[aria-invalid="true"],.field select[aria-invalid="true"]{border-color:var(--danger);background:var(--danger-pale)}
+.field input[aria-invalid="true"]:focus,.field select[aria-invalid="true"]:focus{box-shadow:0 0 0 3px var(--danger-pale)}
+.field select{appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 22px,calc(100% - 15px) 22px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.field-row{display:grid;gap:var(--s3)}
+@media (min-width:520px){ .field-row{grid-template-columns:1fr 1fr} }
+.err{display:none;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--danger)}
+.err::before{content:"!";width:15px;height:15px;border-radius:50%;background:var(--danger);color:var(--white);
+  display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.field.is-bad .err{display:flex}
+
+/* checkbox group */
+.needs{margin:0;padding:0;border:0}
+.needs legend{padding:0;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.needs-opts{display:grid;gap:9px}
+.needs-opts label{display:flex;align-items:center;gap:11px;padding:13px 15px;min-height:50px;
+  border:1px solid var(--line);border-radius:var(--r-btn);background:var(--white);cursor:pointer;
+  font-size:14px;transition:border-color .2s,background .2s}
+.needs-opts label:hover{border-color:var(--green-ink);background:var(--green-pale)}
+.needs-opts input{width:19px;height:19px;accent-color:var(--green-ink);flex:none;margin:0;cursor:pointer}
+.needs-opts label:has(input:checked){border-color:var(--green-ink);background:var(--green-pale)}
+.needs-opts label:has(input:focus-visible){outline:3px solid var(--blue-ink);outline-offset:2px}
+
+/* actions */
+.form-actions{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s5);
+  padding-top:var(--s4);border-top:1px solid var(--line);flex-wrap:wrap}
+.secure{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.secure i{font-style:normal;color:var(--green-ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:50px;padding:0 22px;
+  border-radius:var(--r-btn);font-size:14px;font-weight:700;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s,background .2s,border-color .2s,color .2s}
+.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .16)}
+.btn-primary::after{content:"";position:absolute;inset:0 auto 0 0;width:38%;
+  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .55),transparent);
+  animation:sheen 5.5s ease-in-out infinite;pointer-events:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 11px 24px rgb(6 168 50 / .26)}
+.btn-back{color:var(--muted);padding:0 4px;min-height:44px;font-size:13px}
+.btn-back:hover{color:var(--ink)}
+.btn-back i{font-style:normal;transition:transform .2s}
+.btn-back:hover i{transform:translateX(-3px)}
+.status{font-size:12px;color:var(--muted);margin-bottom:var(--s2)}
+.status b{color:var(--ink)}
+
+/* success */
+.done{display:grid;gap:var(--s3);justify-items:start;padding:var(--s5) 0 0}
+.done-mark{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:var(--green-pale);color:var(--green-ink);font-size:26px;animation:pop .55s var(--spring) both}
+.done-mark::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--green-icon);
+  animation:halo 2.8s ease-out infinite}
+.done h2{font-size:clamp(26px,3vw,34px)}
+.done .kicker{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--green-ink)}
+.done p{color:var(--muted)}
+.done .btn{margin-top:var(--s2)}
+
+/* foot */
+.auth-foot{margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.auth-foot a{color:var(--green-ink);font-weight:700}
+.auth-foot a:hover{text-decoration:underline;text-underline-offset:3px}
+.auth-privacy{margin-top:10px;font-size:12px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html.js [data-reveal]{opacity:1}
+  html.js [data-reveal].is-in{animation:none}
+  .btn-primary::after,.done-mark::after{animation:none;opacity:0}
+}
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#form">Lewati ke formulir</a>
+
+<header class="auth-head">
+  <a class="brand" href="v2-codex.html" aria-label="DECA — Beranda"><img src="logos/deca-b2b-logo.png" width="1080" height="1080" alt="DECA"></a>
+  <a class="head-back" href="v2-codex.html"><span aria-hidden="true">←</span> Kembali ke DECA</a>
+</header>
+
+<main class="auth-layout">
+  <aside class="auth-aside">
+    <div class="aside-in">
+      <figure class="aside-photo" data-reveal data-from="left">
+        <img src="imagery/business-team.jpg" width="1600" height="1200"
+             alt="Tim bisnis berdiskusi bersama di ruang kerja terbuka.">
+        <span class="aside-scrim" aria-hidden="true"></span>
+        <figcaption class="aside-caption">
+          <small>DECA · AKUN BISNIS</small>
+          <b>Ruang untuk<br>bisnismu tumbuh.</b>
+          <i>PEMBAYARAN DIGITAL · INDONESIA</i>
+        </figcaption>
+      </figure>
+      <ul class="aside-benefits" data-reveal style="--delay:140ms">
+        <li><i aria-hidden="true">✓</i> Proses pendaftaran ringkas</li>
+        <li><i aria-hidden="true">✓</i> Dukungan dari tim DECA</li>
+        <li><i aria-hidden="true">✓</i> Solusi sesuai kebutuhan usaha</li>
+      </ul>
+    </div>
+    <span class="aside-mark" aria-hidden="true">D</span>
+  </aside>
+
+  <section class="auth-main">
+    <div class="auth-panel" id="form">
+      <p class="eyebrow">Akun bisnis DECA</p>
+      <h1>Mulai dari sini.</h1>
+      <p class="lede">Ceritakan sedikit tentang dirimu dan bisnismu. Tim DECA akan membantu mengarahkan proses berikutnya.</p>
+
+      <div class="progress">
+        <div class="track"><span id="bar"></span></div>
+        <div class="steps" id="step-labels">
+          <div class="step" data-state="current"><b>01</b><span>Kontak</span></div>
+          <div class="step"><b>02</b><span>Bisnis</span></div>
+          <div class="step"><b>03</b><span>Selesai</span></div>
+        </div>
+      </div>
+
+      <p class="status" id="status" role="status" aria-live="polite">Langkah <b>1</b> dari 3 · Kontak</p>
+
+      <form id="signup" novalidate>
+        <!-- Step 1 -->
+        <section class="form-step" data-step="1" aria-labelledby="h-step1">
+          <div class="step-head">
+            <span aria-hidden="true">01</span>
+            <div><h2 id="h-step1">Siapa yang bisa kami hubungi?</h2><p>Gunakan kontak aktif agar tim kami dapat menghubungimu.</p></div>
+          </div>
+          <label class="field" data-field>
+            <span>Nama lengkap</span>
+            <input name="full_name" autocomplete="name" placeholder="Contoh: Nabila Putri" required minlength="2">
+            <em class="err" data-err>Isi nama lengkapmu, minimal 2 karakter.</em>
+          </label>
+          <div class="field-row">
+            <label class="field" data-field>
+              <span>Email kerja</span>
+              <input name="email" type="email" autocomplete="email" placeholder="nama@bisnis.com" required>
+              <em class="err" data-err>Masukkan alamat email yang valid.</em>
+            </label>
+            <label class="field" data-field>
+              <span>Nomor telepon</span>
+              <input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="08xx xxxx xxxx"
+                     required pattern="[+0-9 ()-]{9,18}">
+              <em class="err" data-err>Masukkan nomor telepon yang valid, 9–18 karakter.</em>
+            </label>
+          </div>
+          <div class="form-actions">
+            <span class="secure"><i aria-hidden="true">◇</i> Informasimu dijaga dengan baik</span>
+            <button class="btn btn-primary" type="button" data-next>Lanjutkan <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section class="form-step" data-step="2" aria-labelledby="h-step2" hidden>
+          <div class="step-head">
+            <span aria-hidden="true">02</span>
+            <div><h2 id="h-step2">Ceritakan tentang bisnismu.</h2><p>Biar kami bisa memahami kebutuhan yang paling sesuai.</p></div>
+          </div>
+          <label class="field" data-field>
+            <span>Nama bisnis</span>
+            <input name="business_name" autocomplete="organization" placeholder="Contoh: Toko Serba Ada" required minlength="2">
+            <em class="err" data-err>Isi nama bisnismu, minimal 2 karakter.</em>
+          </label>
+          <div class="field-row">
+            <label class="field" data-field>
+              <span>Jenis bisnis</span>
+              <select name="business_type" required>
+                <option value="" selected disabled>Pilih jenis bisnis</option>
+                <option>UMKM &amp; Retail</option>
+                <option>Koperasi</option>
+                <option>Enterprise</option>
+                <option>Institusi Keuangan</option>
+                <option>Lainnya</option>
+              </select>
+              <em class="err" data-err>Pilih salah satu jenis bisnis.</em>
+            </label>
+            <label class="field" data-field>
+              <span>Kota operasional</span>
+              <input name="city" autocomplete="address-level2" placeholder="Contoh: Jakarta" required minlength="2">
+              <em class="err" data-err>Isi kota operasionalmu.</em>
+            </label>
+          </div>
+          <fieldset class="needs">
+            <legend>Layanan yang ingin diketahui <span style="font-weight:400;color:var(--muted)">(opsional)</span></legend>
+            <div class="needs-opts">
+              <label><input type="checkbox" name="interest" value="DECA for Merchant"><span>DECA for Merchant</span></label>
+              <label><input type="checkbox" name="interest" value="DECA Business"><span>DECA Business</span></label>
+              <label><input type="checkbox" name="interest" value="Belum yakin"><span>Belum yakin</span></label>
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <button class="btn btn-back" type="button" data-back><i aria-hidden="true">←</i> Kembali</button>
+            <button class="btn btn-primary" type="submit">Kirim permintaan <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section class="form-step" data-step="3" aria-labelledby="h-step3" hidden>
+          <div class="done">
+            <span class="done-mark" aria-hidden="true">✓</span>
+            <p class="kicker">Permintaan pendaftaran</p>
+            <h2 id="h-step3">Terima kasih!</h2>
+            <p id="done-msg">Permintaanmu sudah dikirim.</p>
+            <p>Tim CS DECA akan mengirim email berisi langkah untuk login ke portal bisnis setelah meninjau permintaanmu. <strong>Akun tidak dibuat langsung dari website.</strong></p>
+            <a class="btn btn-primary" href="v2-codex.html">Kembali ke DECA <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+      </form>
+
+      <p class="auth-foot" data-reveal style="--delay:220ms">Sudah punya akun? Akses portal DECA Business diatur lewat tim CS — <a href="https://wa.me/628979513080" target="_blank" rel="noopener">hubungi CS DECA ↗</a></p>
+      <p class="auth-privacy">Data pendaftaran akan ditinjau oleh tim CS DECA.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var all = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var form = document.getElementById('signup');
+  if (!form) return;
+
+  var bar = document.getElementById('bar');
+  var status = document.getElementById('status');
+  var labels = all('.step', document.getElementById('step-labels'));
+  var panels = all('.form-step', form);
+  var step = 1, last = 3;
+  var NAMES = { 1: 'Kontak', 2: 'Bisnis', 3: 'Selesai' };
+
+  /* Reveal is defined up here because a panel that was hidden never
+     intersected the viewport, so it still needs revealing when it opens. */
+  var reveal = function (el) { el.classList.add('is-in'); };
+  var revealIn = function (root) { all('[data-reveal]', root).forEach(reveal); };
+
+  function paint() {
+    panels.forEach(function (p) { p.hidden = Number(p.getAttribute('data-step')) !== step; });
+    labels.forEach(function (l, i) {
+      var n = i + 1;
+      l.setAttribute('data-state', n < step ? 'done' : n === step ? 'current' : '');
+    });
+    bar.style.width = (step / last * 100) + '%';
+    status.innerHTML = 'Langkah <b>' + step + '</b> dari ' + last + ' · ' + NAMES[step];
+    var live = panels[step - 1];
+    if (live) revealIn(live);
+    var focusable = live && live.querySelector('input,select,button');
+    if (focusable && step > 1) focusable.focus({ preventScroll: true });
+  }
+
+  /* Validity is checked field by field so the message sits under the control
+     it belongs to, and the control itself is marked for assistive tech. */
+  function check(panel) {
+    var bad = 0;
+    all('input,select', panel).forEach(function (el) {
+      var field = el.closest('[data-field]');
+      if (!field) return;                       /* optional checkboxes */
+      var ok = el.checkValidity();
+      field.classList.toggle('is-bad', !ok);
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok) {
+        bad++;
+        var err = field.querySelector('[data-err]');
+        if (err && !err.id) err.id = el.name + '-err';
+        if (err) el.setAttribute('aria-describedby', err.id);
+      } else {
+        el.removeAttribute('aria-describedby');
+      }
+    });
+    return bad === 0;
+  }
+
+  /* Clear a field's error as soon as the reader fixes it. */
+  form.addEventListener('input', function (e) {
+    var field = e.target.closest('[data-field]');
+    if (field && field.classList.contains('is-bad') && e.target.checkValidity()) {
+      field.classList.remove('is-bad');
+      e.target.setAttribute('aria-invalid', 'false');
+      e.target.removeAttribute('aria-describedby');
+    }
+  });
+
+  all('[data-next]', form).forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (!check(panels[step - 1])) {
+        status.innerHTML = 'Ada isian yang perlu diperbaiki di langkah ' + step + '.';
+        var first = form.querySelector('[aria-invalid="true"]');
+        if (first) first.focus();
+        return;
+      }
+      step = Math.min(step + 1, last);
+      paint();
+    });
+  });
+
+  all('[data-back]', form).forEach(function (b) {
+    b.addEventListener('click', function () { step = Math.max(step - 1, 1); paint(); });
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!check(panels[step - 1])) return;
+    /* No endpoint exists: DECA has published no registration API, so this
+       stops at the confirmation rather than pretending to send anything. */
+    var name = (form.querySelector('[name="full_name"]') || {}).value || '';
+    var msg = document.getElementById('done-msg');
+    if (msg && name.trim()) msg.textContent = 'Terima kasih, ' + name.trim().split(' ')[0] + '. Permintaanmu sudah kami terima.';
+    step = last;
+    paint();
+  });
+
+  /* Entrance, then the first panel's own reveal. */
+  var marks = all('[data-reveal]');
+  if (!('IntersectionObserver' in window)) {
+    marks.forEach(reveal);
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { reveal(en.target); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
+    marks.forEach(function (el) { io.observe(el); });
+  }
+
+  paint();
+})();
+</script>
+</body>
+</html>
