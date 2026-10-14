@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syarat & Ketentuan dan Kebijakan Privasi — DECA</title>
+<meta name="description" content="Dua dokumen yang mengatur hubungan kamu dengan PT Delta Omega Beta saat memakai aplikasi DECA, dengan daftar isi yang bisa diklik.">
+<meta name="theme-color" content="#f8fbf8">
+<link rel="icon" href="logos/deca-b2b-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   MOTION
+   The entrance technique is lifted from singapay.id: the two axes are
+   registered custom properties, so the browser interpolates them itself and
+   one keyframe set can serve every direction. Two deliberate choices:
+
+   · `translate` carries the entrance, never `transform`. The cards own
+     `transform` for their hover lift, and the two compose instead of
+     fighting — the same reason the source site animates `translate`.
+   · `animation`, never `transition`. A card's transition list belongs to the
+     card; an entrance declared as a transition would silently overwrite it.
+
+   Everything is inside `html.js`, so a reader without JavaScript gets the
+   page fully rendered rather than a screen of invisible sections.
+   ========================================================================== */
+@property --en-x{syntax:"<length>";inherits:false;initial-value:0px}
+
+@property --en-y{syntax:"<length>";inherits:false;initial-value:26px}
+
+/* ==========================================================================
+   DECA v2-codex — the B2B design system, contrast-corrected.
+   Merge of the two DECA properties:
+     · 103.159.199.42:8090  → the ecosystem frame, three products, six
+                              solution verticals, and the type/geometry system
+     · the consumer site    → the DECA Cash detail: features, how-to flows,
+                              channel catalogue, fees, and security
+   Colour values are the CORRECTED set: brand green untouched, labels and
+   text-safe variants moved only as far as 4.5:1 requires.
+   ========================================================================== */
+:root{
+  --paper:#f8fbf8;
+  --white:#ffffff;
+  --ink:#102521;
+  --muted:#657773;
+  --line:#e3ebe6;
+  --green:#05bd3b;        /* brand fill — 2.41 on paper, never used as text */
+  --green-ink:#08803f;    /* text-safe green — 4.6+ on paper, white AND green-pale */
+  --green-icon:#11a63a;   /* icon green, 3.08 */
+  --green-pale:#e7f9eb;
+  --blue-ink:#0168c8;     /* line blue — 5.50 on white, 4.84 on blue-pale */
+  --blue-pale:#eaf3ff;
+  --mint:#e7f7f5;
+  --teal-ink:#0a7570;     /* 4.93 on mint; was #0c8580 at 4.06 */
+  --line-strong:#b6dfc1;  /* card hover border */
+  --on-band:#dcf1e2;      /* body text on the contact band and the wallet card */
+  /* The contact-band ramp, replacing the source's #087c3b → #09a84e → #0878ba,
+     whose middle stop gave white only 3.12:1 and its own lede 2.64:1. Every
+     stop below clears 4.5 for white and for --on-band. */
+  --band-a:#04552a; --band-b:#087038; --band-c:#064e7d;
+  --display:'Manrope',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  --body:'DM Sans',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
+  --r-btn:7px; --r-card:9px; --r-chip:10px; --r-panel:14px;
+  /* The source's signature corner: three tight radii and one long sweep. */
+  --r-arch:7px 120px 7px 7px;
+  --max:1200px;
+  --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:40px; --s6:48px; --s8:64px; --s10:80px;
+  --spring:cubic-bezier(.22,1,.36,1);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:750;letter-spacing:-.055em;line-height:1.12;text-wrap:balance}
+
+p{margin:0;text-wrap:pretty}
+
+a{color:inherit;text-decoration:none}
+
+ul,ol{margin:0;padding:0;list-style:none}
+
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+img{max-width:100%;display:block}
+
+:focus-visible{outline:3px solid var(--blue-ink);outline-offset:2px;border-radius:4px}
+
+.shell{width:min(var(--max),calc(100% - 64px));margin-inline:auto}
+
+section{padding:var(--s10) 0}
+
+.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--green-ink);margin-bottom:var(--s2)}
+
+.h2{font-size:clamp(28px,3.6vw,44px)}
+
+.lede{color:var(--muted);max-width:64ch}
+
+.head{margin-bottom:var(--s6);max-width:780px}
+
+.head .h2{margin-bottom:var(--s2)}
+
+/* ---------- notice ---------- */
+.notice-bar{display:flex;align-items:center;justify-content:center;gap:9px;padding:8px 16px;background:var(--green-pale);color:var(--green-ink);font-size:11px;letter-spacing:.06em;font-weight:600;text-align:center}
+
+.notice-bar i{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
+
+/* ---------- header ---------- */
+/* Derived from --paper rather than repeating its value, so the header tint
+   cannot drift from the canvas it sits on. */
+.site-header{position:sticky;top:0;z-index:40;background:color-mix(in oklab,var(--paper) 94%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+
+.header-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);height:78px}
+
+.brand{position:relative;width:112px;height:50px;overflow:hidden;flex:none}
+
+.brand img{position:absolute;width:112px;height:112px;max-width:none;left:0;top:-38px}
+
+.main-nav{display:none;align-items:center;gap:var(--s3)}
+
+.main-nav a{font-size:13px;font-weight:600;color:var(--muted);transition:color .2s}
+
+.main-nav a:hover{color:var(--green-ink)}
+
+.header-actions{display:flex;align-items:center;gap:var(--s2)}
+
+.login-link{display:none;font-size:13px;font-weight:600;color:var(--muted)}
+
+.login-link:hover{color:var(--green-ink)}
+
+.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;align-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:var(--r-btn);background:var(--white)}
+
+.burger span{width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s,opacity .2s}
+
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.nav-mobile{display:none;border-top:1px solid var(--line);background:var(--white)}
+
+.nav-mobile.open{display:block}
+
+.nav-mobile a{display:block;padding:15px var(--s3);font-size:14px;font-weight:600;border-bottom:1px solid var(--line)}
+
+.nav-mobile a:hover{background:var(--green-pale)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:49px;padding:0 21px;border-radius:var(--r-btn);font-size:13px;font-weight:700;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s,color .2s}
+
+.btn:hover{transform:translateY(-2px)}
+
+.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
+
+.btn-primary:hover{box-shadow:0 10px 22px rgb(6 168 50 / .22)}
+
+.btn-quiet{color:var(--ink);padding:0 6px}
+
+.btn-quiet i{font-style:normal;color:var(--green-ink);transition:transform .2s}
+
+.btn-quiet:hover i{transform:translateX(-3px)}
+
+.btn-ghost{border:1px solid var(--line);background:var(--white);color:var(--ink);min-height:44px;padding:0 18px;font-size:13px}
+
+.btn-ghost:hover{border-color:var(--green-ink);color:var(--green-ink)}
+
+.btn-small{min-height:39px;padding:0 16px;font-size:12px;gap:10px}
+
+.link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--green-ink);min-height:44px}
+
+.link i{font-style:normal;transition:transform .2s}
+
+.link:hover i{transform:translate(3px,-3px)}
+
+/* ---------- footer ---------- */
+.footer{background:var(--white);border-top:1px solid var(--line);padding:var(--s8) 0 0}
+
+.footer-grid{display:grid;gap:var(--s5)}
+
+.footer h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s2);font-weight:700}
+
+.footer li{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+.footer li a{color:var(--ink);font-weight:600}
+
+.footer li a:hover{color:var(--green-ink);text-decoration:underline;text-underline-offset:3px}
+
+.footer-brand .tagline{font-size:13px;color:var(--muted);margin-top:var(--s2);font-weight:600;font-family:var(--display)}
+
+.footer-bottom{margin-top:var(--s6);padding:var(--s3) 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:space-between;font-size:12px;color:var(--muted)}
+
+@keyframes enter{from{opacity:0;translate:var(--en-x) var(--en-y)}to{opacity:1;translate:0 0}}
+
+@media (min-width:640px){
+.footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (min-width:900px){
+.main-nav{display:flex}
+.login-link{display:inline}
+.burger{display:none}
+.nav-mobile{display:none !important}
+.footer-grid{grid-template-columns:1.3fr 1fr 1fr;gap:var(--s6)}
+}
+
+@media (min-width:1100px){
+.footer-grid{grid-template-columns:1.35fr .8fr .8fr 1fr 1fr;gap:var(--s5)}
+}
+
+@media (prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+/* The reveal is the one exception: running it at .01ms would flash a
+     section in. Drop it straight to its resting state instead. */
+  html.js [data-reveal]{opacity:1}
+html.js [data-reveal].is-in{animation:none}
+}
+
+/* ==========================================================================
+   Sub-page furniture. Sits on top of the shell, which carries the tokens and
+   the chrome — nothing here redefines either.
+   ========================================================================== */
+
+/* ---------- hero ----------
+   The plain pages put a crumb, a title and a paragraph in a 1200px shell and
+   left half of it empty. The hero is now the main page's own recipe: a green
+   glow over a white-to-paper ramp, with the app screenshot beside the title
+   instead of floating loose in the body. */
+.page-hero{position:relative;overflow:hidden;padding:var(--s6) 0 var(--s8);
+  background:radial-gradient(78% 62% at 16% 0,var(--green-pale) 0,transparent 58%),
+             linear-gradient(180deg,var(--white),var(--paper))}
+.page-hero h1{font-size:clamp(30px,4.4vw,48px)}
+.page-hero .lede{margin-top:var(--s3);font-size:16px;max-width:50ch}
+.hero-grid{display:grid;gap:var(--s6);align-items:center}
+@media (min-width:900px){ .hero-grid{grid-template-columns:1.06fr .94fr;gap:var(--s8)} }
+.hero-art{width:100%;max-width:330px;margin:0;justify-self:center}
+
+.crumb{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+  color:var(--muted);min-height:44px;margin-bottom:var(--s2)}
+.crumb:hover{color:var(--green-ink)}
+.crumb i{font-style:normal;transition:transform .2s}
+.crumb:hover i{transform:translateX(-3px)}
+
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--s4)}
+.tag{font-size:11px;font-weight:700;color:var(--green-ink);background:var(--green-pale);
+  padding:5px 12px;border-radius:14px}
+
+/* The numbers that answer "how long, how much, how many" before the reader
+   commits to seven steps of prose. Every figure here is stated in the source;
+   none is an estimate. */
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--s5)}
+.fact{display:grid;gap:3px;padding:11px 16px;border-radius:var(--r-card);
+  background:var(--white);border:1px solid var(--line)}
+.fact b{font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-.045em;
+  color:var(--green-ink);line-height:1.1;white-space:nowrap}
+.fact small{font-size:11px;color:var(--muted)}
+
+/* ---------- plate ---------- */
+.plate{margin:0;background:var(--white);border:1px solid var(--line);
+  border-radius:var(--r-panel);padding:var(--s2);box-shadow:0 20px 45px rgb(16 46 30 / .08)}
+.plate img{width:100%;height:auto;border-radius:var(--r-card)}
+.plate figcaption{font-size:12px;color:var(--muted);padding:10px 4px 4px;text-align:center}
+
+/* ---------- reading column ---------- */
+.read{max-width:74ch}
+.read h2{font-size:clamp(20px,2.4vw,26px);margin:var(--s8) 0 var(--s3)}
+.read h2:first-child{margin-top:0}
+.read h3{font-size:17px;margin:var(--s6) 0 var(--s2)}
+.read p{color:var(--muted);font-size:15px;line-height:1.75}
+.read p+p{margin-top:var(--s3)}
+.read strong{color:var(--ink);font-weight:700}
+.read a{color:var(--green-ink);font-weight:600}
+.read a:hover{text-decoration:underline;text-underline-offset:3px}
+.read ul{margin:var(--s3) 0;display:grid;gap:12px}
+.read ul li{display:grid;grid-template-columns:14px 1fr;gap:11px;color:var(--muted);
+  font-size:15px;line-height:1.7}
+.read ul li::before{content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--green-icon);margin-top:9px}
+.read .small{margin-top:var(--s6)}
+
+/* A ✓ list, for "what you need" rather than "what happens next".
+   Scoped through .read on purpose: `.read ul li::before` is (0,1,3) against
+   `.checks li::before` at (0,1,2), so the plain bullet was winning and every
+   one of these rendered as a dot. */
+.read .checks{display:grid;gap:11px;margin:var(--s3) 0}
+.read .checks li{display:grid;grid-template-columns:20px 1fr;gap:12px;font-size:15px;
+  line-height:1.7;color:var(--muted)}
+.read .checks li::before{content:"✓";color:var(--green-ink);font-weight:700;
+  width:auto;height:auto;border-radius:0;background:none;margin-top:0}
+
+/* ---------- step rail ----------
+   The steps were a plain ordered list: rows of grey text with numerals beside
+   them and nothing joining one to the next. Each numeral now sits on a rule
+   that runs on to the following step, so the list reads as one path. */
+.stepcard{background:var(--white);border:1px solid var(--line);
+  border-radius:var(--r-panel);padding:var(--s5) var(--s4);margin:var(--s4) 0}
+.steps{display:grid;gap:0;counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{position:relative;display:grid;grid-template-columns:30px 1fr;gap:var(--s3);
+  align-items:start;padding-bottom:var(--s3);counter-increment:s;
+  font-size:15px;line-height:1.7;color:var(--muted)}
+.steps li:last-child{padding-bottom:0}
+/* z-index 1: without it the rule paints over the disc, because ::after comes
+   later in paint order than ::before. */
+.steps li::before{position:relative;z-index:1;content:counter(s);width:30px;height:30px;
+  border-radius:50%;display:grid;place-items:center;background:var(--green-pale);
+  color:var(--green-ink);font-family:var(--display);font-weight:750;font-size:12px}
+.steps li:not(:last-child)::after{content:"";position:absolute;z-index:0;left:14px;
+  top:34px;bottom:2px;width:2px;border-radius:2px;background:var(--line-strong)}
+.steps strong{color:var(--ink);font-weight:700}
+
+/* ---------- callout ----------
+   A filled plate, not a rule down one edge — the left-bar callout is the
+   pattern every template reaches for. */
+.note{display:grid;grid-template-columns:22px 1fr;gap:13px;align-items:start;
+  background:var(--green-pale);border-radius:var(--r-card);padding:var(--s3) var(--s4);
+  margin:var(--s5) 0}
+.note::before{content:"!";width:22px;height:22px;border-radius:50%;
+  background:var(--green-ink);color:var(--white);display:grid;place-items:center;
+  font-weight:800;font-size:12px}
+.note p{color:var(--ink);font-size:14px;margin:0}
+
+/* ---------- table ---------- */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-card);
+  background:var(--white);margin:var(--s4) 0}
+table{border-collapse:collapse;width:100%;min-width:420px}
+th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;background:var(--paper)}
+td{color:var(--muted)}
+td strong{color:var(--ink)}
+tbody tr:last-child td{border-bottom:0}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-live{background:var(--green-ink);color:var(--white)}
+
+.rule{border:0;border-top:1px solid var(--line);margin:var(--s8) 0 0}
+.small{font-size:12.5px;color:var(--muted);max-width:70ch}
+
+/* ---------- related cards ----------
+   Three plain links became three cards, and they sit outside the reading
+   column so the row can use the full measure instead of three 170px slivers.
+   `.read .relcard` outranks `.read a`, so the card text is not link-green. */
+.related{display:grid;gap:var(--s3)}
+@media (min-width:640px){ .related{grid-template-columns:repeat(3,1fr)} }
+.read .relcard{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);
+  border-radius:var(--r-card);background:var(--white);padding:var(--s4);color:var(--ink);
+  font-weight:400;transition:transform .25s,box-shadow .25s,border-color .25s}
+.read .relcard:hover{transform:translateY(-4px);border-color:var(--line-strong);
+  box-shadow:0 16px 35px rgb(20 53 29 / .06);text-decoration:none}
+.relcard .kicker{font-size:10px;letter-spacing:.1em;font-weight:700;color:var(--green-ink)}
+.relcard h3{font-size:16px;margin:0}
+.relcard p{font-size:13px;color:var(--muted);flex:1}
+.relcard .go{font-size:12px;font-weight:700;color:var(--green-ink)}
+
+/* ---------- document layout ----------
+   For the legal page, which is a reference document rather than an article:
+   a contents rail that stays in view beats a list you scroll back up to. */
+.doc{display:grid;gap:var(--s5);align-items:start}
+@media (min-width:960px){ .doc{grid-template-columns:250px 1fr;gap:var(--s8)} }
+.tocrail{display:grid;gap:var(--s4)}
+@media (min-width:960px){ .tocrail{position:sticky;top:104px} }
+.tocrail .grp{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  color:var(--green-ink);margin-bottom:10px}
+.tocrail ol{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.tocrail a{font-size:13px;color:var(--muted);font-weight:600;display:block;
+  transition:color .2s,translate .2s}
+.tocrail a:hover{color:var(--green-ink);translate:3px 0}
+
+/* ---------- sitemap ---------- */
+.sitecards{display:grid;gap:var(--s3)}
+@media (min-width:900px){ .sitecards{grid-template-columns:repeat(3,1fr)} }
+.mapcard{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);
+  border-radius:var(--r-card);background:var(--white);padding:var(--s4);
+  transition:transform .25s,box-shadow .25s,border-color .25s}
+.mapcard:hover{transform:translateY(-4px);border-color:var(--line-strong);
+  box-shadow:0 16px 35px rgb(20 53 29 / .06)}
+.mapcard .kicker{font-size:10px;letter-spacing:.1em;font-weight:700;color:var(--muted)}
+.mapcard h3{font-size:17px}
+.mapcard p{font-size:13px;color:var(--muted);flex:1}
+.mapcard .go{font-size:12px;font-weight:700;color:var(--green-ink)}
+/* What is actually on the page, so the card is an index rather than a teaser. */
+.inside{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.inside span{font-size:10px;font-weight:600;color:var(--muted);background:var(--paper);
+  border:1px solid var(--line);border-radius:10px;padding:3px 9px}
+.sitemap-group{margin-top:var(--s8)}
+.sitemap-group:first-of-type{margin-top:0}
+.sitemap-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:var(--s2)}
+.sitemap-head h2{font-size:clamp(20px,2.4vw,26px);margin:0}
+.sitemap-head span{font-size:12px;color:var(--muted)}
+
+/* ---------- closing band ---------- */
+.band{background:linear-gradient(105deg,var(--band-a),var(--band-b) 63%,var(--band-c));
+  color:var(--white);position:relative;overflow:hidden}
+.band::after{content:"";position:absolute;width:460px;height:460px;right:-96px;top:-235px;
+  border:1px solid rgb(255 255 255 / .17);border-radius:50%;
+  box-shadow:0 0 0 35px rgb(255 255 255 / .04),0 0 0 75px rgb(255 255 255 / .03)}
+.band .shell{position:relative;z-index:1;display:grid;gap:var(--s5);align-items:center}
+.band h2{color:var(--white);font-size:clamp(24px,3.2vw,38px);margin-bottom:var(--s2)}
+.band .lede{color:var(--on-band);font-size:15px}
+.band .eyebrow{color:var(--on-band)}
+.band-actions{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);align-items:center}
+.btn-white{background:var(--white);color:var(--green-ink);box-shadow:none}
+.band .tel{font-size:13px;color:var(--on-band);text-decoration:underline;text-underline-offset:3px}
+@media (min-width:900px){ .band .shell{grid-template-columns:1fr auto} }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main" style="position:absolute;left:-9999px">Lewati ke konten utama</a>
+
+<p class="notice-bar" data-od-id="notice"><i></i> Dibangun untuk kebutuhan transaksi Indonesia &nbsp;·&nbsp; Konsumen · Merchant · Bisnis · Mitra</p>
+
+<header class="site-header" data-od-id="site-header">
+  <div class="shell header-in">
+    <a class="brand" href="v2-codex.html" aria-label="DECA — Beranda"><img src="logos/deca-b2b-logo.png" width="1080" height="1080" alt="DECA"></a>
+    <nav class="main-nav" aria-label="Navigasi utama">
+      <a href="v2-codex.html#produk">Produk</a>
+      <a href="v2-codex.html#layanan">Layanan</a>
+      <a href="v2-codex.html#solusi">Solusi</a>
+      <a href="v2-codex.html#panduan">Panduan</a>
+      <a href="v2-codex.html#tentang">Tentang DECA</a>
+      <a href="v2-codex.html#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <a class="login-link" href="v2-codex.html#kontak">Masuk</a>
+      <a class="btn btn-primary btn-small" href="v2-codex-register.html">Buat akun <span>↗</span></a>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="nav-mobile" aria-label="Buka menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="v2-codex.html#ekosistem">Ekosistem</a>
+    <a href="v2-codex.html#produk">Produk</a>
+    <a href="v2-codex.html#layanan">Layanan</a>
+    <a href="v2-codex.html#katalog">Channel pembayaran</a>
+    <a href="v2-codex.html#solusi">Solusi</a>
+    <a href="v2-codex.html#keamanan">Keamanan</a>
+    <a href="v2-codex.html#panduan">Panduan</a>
+    <a href="v2-codex.html#bantuan">Bantuan</a>
+    <a href="v2-codex.html#tentang">Tentang DECA</a>
+    <a href="v2-codex.html#faq">FAQ</a>
+    <a href="v2-codex-register.html">Buat akun bisnis</a>
+  </div>
+</header>
+
+<main id="main">
+<section class="page-hero">
+  <div class="shell">
+    <div>
+      <a class="crumb" href="v2-codex.html#tentang"><i aria-hidden="true">←</i> Perusahaan &amp; legal</a>
+      <h1 data-od-id="legal-title">Syarat &amp; Ketentuan dan Kebijakan Privasi</h1>
+      <p class="lede">Dua dokumen yang mengatur hubungan kamu dengan PT Delta Omega Beta saat memakai aplikasi DECA.</p>
+      <div class="tags"><span class="tag">Syarat &amp; Ketentuan</span><span class="tag">Kebijakan Privasi</span></div>
+      <div class="facts"><div class="fact"><b>2</b><small>Dokumen</small></div><div class="fact"><b>14</b><small>Bagian</small></div><div class="fact"><b>Kominfo &amp; BI</b><small>Kerangka kepatuhan</small></div></div>
+    </div>
+    
+  </div>
+</section>
+<section style="padding-top:0">
+  <div class="shell">
+    <div class="note" data-reveal style="margin-top:0;margin-bottom:var(--s6)">
+      <p><strong>Status dokumen ini.</strong> Halaman ini memuat struktur resmi dua dokumen legal DECA untuk keperluan perancangan ulang situs. Teks yang mengikat secara hukum adalah versi yang diterbitkan PT Delta Omega Beta melalui aplikasi dan kanal resminya.</p>
+    </div>
+
+    <div class="doc">
+      <aside class="tocrail" data-reveal>
+        <div>
+          <p class="grp">Syarat &amp; Ketentuan</p>
+          <ol>
+          <li><a href="#s1">1. Tentang layanan</a></li>
+          <li><a href="#s2">2. Akun kamu</a></li>
+          <li><a href="#s3">3. Saldo &amp; top up</a></li>
+          <li><a href="#s4">4. Biaya</a></li>
+          <li><a href="#s5">5. Transaksi</a></li>
+          <li><a href="#s6">6. Keamanan akun</a></li>
+          <li><a href="#s7">7. Yang tidak boleh dilakukan</a></li>
+          <li><a href="#s8">8. Penghentian &amp; perubahan</a></li>
+          </ol>
+        </div>
+        <div>
+          <p class="grp">Kebijakan Privasi</p>
+          <ol>
+          <li><a href="#p1">1. Data yang kami kumpulkan</a></li>
+          <li><a href="#p2">2. Cara kami memakainya</a></li>
+          <li><a href="#p3">3. Keamanan data</a></li>
+          <li><a href="#p4">4. Berbagi data</a></li>
+          <li><a href="#p5">5. Hak kamu</a></li>
+          <li><a href="#p6">6. Perubahan &amp; kontak</a></li>
+          </ol>
+        </div>
+      </aside>
+
+      <div class="read" data-reveal>
+        <h2 id="syarat">Syarat &amp; Ketentuan</h2>
+        <p>Dokumen ini mengatur penggunaan aplikasi DECA, yang diselenggarakan oleh <strong>PT Delta Omega Beta</strong>, beralamat di Gedung Arva Gondangdia Lantai 1, Jl. Rp. Soeroso No. 40 BC, Gondangdia, DKI Jakarta 10350, Indonesia.</p>
+
+        <h3 id="s1">1. Tentang layanan</h3>
+        <p>DECA adalah aplikasi pembayaran all-in-one. Layanan yang tersedia di dalamnya meliputi top up saldo DECA Cash, pembelian pulsa dan paket data, pembelian produk PPOB, transfer antar akun, serta pembayaran tagihan dan multipayment — sejauh fitur tersebut sudah dirilis di aplikasi.</p>
+        <p>Fitur yang belum dirilis ditandai <em>segera hadir</em> di situs ini dan tidak dapat digunakan sampai resmi tersedia.</p>
+
+        <h3 id="s2">2. Akun kamu</h3>
+        <p>Untuk memakai DECA, kamu perlu mendaftar dan menjaga kerahasiaan kredensial akunmu. Kamu bertanggung jawab atas semua aktivitas yang terjadi melalui akunmu.</p>
+        <p>DECA menyediakan dua tingkat akun. Akun dasar bisa langsung dipakai. Akun <strong>DECA Premium</strong> diperoleh setelah kamu menyelesaikan verifikasi identitas dengan E-KTP dan selfie. Verifikasi membantu melindungi akun dan membuka manfaat tambahan yang ditampilkan di aplikasi.</p>
+
+        <h3 id="s3">3. Saldo &amp; top up</h3>
+        <p>Saldo <strong>DECA Cash</strong> diisi melalui top up dan dipakai untuk bertransaksi di dalam aplikasi. Top up saldo tidak dikenakan biaya admin.</p>
+        <p>Channel pembayaran yang tersedia saat ini adalah Bank Transfer (BCA dan Permata) serta Virtual Account (Permata). Biaya per channel ditampilkan di aplikasi sebelum kamu mengonfirmasi, dan juga dirangkum di <a href="v2-codex.html#biaya">tabel biaya</a>.</p>
+        <p>Aplikasi menampilkan sisa limit transaksi bulanan akunmu pada layar Topup Saldo. Limit dapat berbeda tergantung status akun.</p>
+
+        <h3 id="s4">4. Biaya</h3>
+        <p>Biaya top up saldo DECA Cash adalah sebagai berikut: Bank Transfer BCA dan Permata gratis, Virtual Account Permata Rp1.500.</p>
+        <p>Biaya lain di luar top up — termasuk biaya yang mungkin berlaku untuk produk PPOB, transfer, atau penarikan dana setelah fiturnya dirilis — akan ditampilkan di aplikasi sebelum kamu mengonfirmasi transaksi. Jadwal biaya lengkapnya akan diterbitkan sebagai bagian dari dokumen ini.</p>
+
+        <h3 id="s5">5. Transaksi</h3>
+        <p>Transaksi di DECA diotorisasi dengan PIN transaksi. Setelah kamu memasukkan PIN dan transaksi diproses, transaksi tidak dapat dibatalkan secara sepihak melalui aplikasi.</p>
+        <p>Untuk transaksi yang bermasalah — misalnya salah nomor tujuan — hubungi Customer Support melalui kanal resmi di <a href="v2-codex.html#bantuan">pusat bantuan</a> dengan menyertakan waktu transaksi.</p>
+
+        <h3 id="s6">6. Keamanan akun</h3>
+        <p>Akses akun DECA dilindungi PIN transaksi, 2FA verification (Google Authenticator), OTP, dan biometric login (fingerprint). Kamu dapat memantau seluruh aktivitas yang terdeteksi pada akunmu melalui menu Riwayat.</p>
+        <p>Petugas DECA tidak pernah menanyakan PIN atau kode OTP kamu melalui telepon, WhatsApp, maupun email. Jangan pernah memberikan kode tersebut kepada siapa pun.</p>
+
+        <h3 id="s7">7. Yang tidak boleh dilakukan</h3>
+        <p>Saat memakai DECA, kamu tidak boleh menggunakan layanan untuk kegiatan yang melanggar hukum, memberikan data identitas yang tidak benar saat verifikasi, atau berupaya mengakses akun milik orang lain.</p>
+
+        <h3 id="s8">8. Penghentian &amp; perubahan</h3>
+        <p>Ketentuan ini dapat diperbarui seiring perkembangan layanan dan peraturan yang berlaku. Versi terbaru akan diterbitkan melalui aplikasi dan situs ini.</p>
+        <p>Ketentuan mengenai penghentian akun, penyelesaian sengketa, dan hukum yang berlaku akan dituangkan lengkap dalam dokumen resmi yang diterbitkan PT Delta Omega Beta.</p>
+
+        <h2 id="privasi">Kebijakan Privasi</h2>
+        <p>Kebijakan ini menjelaskan bagaimana PT Delta Omega Beta mengelola data pribadi pengguna aplikasi DECA.</p>
+
+        <h3 id="p1">1. Data yang kami kumpulkan</h3>
+        <p>Sesuai fitur yang ada di aplikasi, data berikut dikumpulkan:</p>
+        <ul>
+          <li><span><strong>Data akun</strong> — nomor telepon dan nomor <em>deca account</em> yang dipakai untuk masuk dan menerima transfer.</span></li>
+          <li><span><strong>Data verifikasi</strong> — foto E-KTP dan selfie dengan E-KTP, serta data yang kamu isi sesuai E-KTP, jika kamu mengajukan DECA Premium.</span></li>
+          <li><span><strong>Data transaksi</strong> — riwayat top up, pembelian pulsa dan paket data, serta transfer yang tercatat di menu Riwayat.</span></li>
+          <li><span><strong>Data perangkat dan keamanan</strong> — informasi yang diperlukan untuk menjalankan PIN, OTP, 2FA, dan biometric login.</span></li>
+        </ul>
+
+        <h3 id="p2">2. Cara kami memakainya</h3>
+        <p>Data tersebut dipakai untuk menjalankan layanan: memproses top up dan transaksi, memverifikasi identitasmu saat mengajukan DECA Premium, menampilkan riwayat aktivitas di akunmu, serta menjaga akun dari akses yang tidak sah.</p>
+
+        <h3 id="p3">3. Keamanan data</h3>
+        <p>Aplikasi DECA memastikan semua transaksi dan data kamu aman mengikuti peraturan dari <strong>Kominfo</strong> (Perlindungan Data) dan mengikuti peraturan <strong>Bank Indonesia</strong> (BI).</p>
+        <p>Di sisi aplikasi, akses diamankan dengan PIN transaksi, 2FA verification (Google Authenticator), OTP, dan biometric login (fingerprint). Rinciannya ada di <a href="v2-codex.html#keamanan">bagian Keamanan</a>.</p>
+
+        <h3 id="p4">4. Berbagi data</h3>
+        <p>Data dipakai untuk menjalankan layanan DECA. Ketentuan lengkap mengenai pihak ketiga yang terlibat dalam pemrosesan transaksi — misalnya penyedia channel pembayaran — akan dituangkan dalam dokumen resmi yang diterbitkan PT Delta Omega Beta.</p>
+
+        <h3 id="p5">5. Hak kamu</h3>
+        <p>Kamu dapat memeriksa riwayat aktivitas akunmu langsung dari aplikasi. Untuk permintaan lain terkait data pribadimu — termasuk pertanyaan tentang data apa yang kami simpan — hubungi Customer Support melalui kanal di <a href="v2-codex.html#bantuan">pusat bantuan</a>.</p>
+
+        <h3 id="p6">6. Perubahan &amp; kontak</h3>
+        <p>Kebijakan ini dapat diperbarui seiring perubahan layanan dan peraturan. Versi terbaru akan diterbitkan melalui aplikasi dan situs ini.</p>
+        <p>Pertanyaan soal dokumen ini bisa dikirim ke <a href="mailto:cs@deca.co.id">cs@deca.co.id</a> atau WhatsApp <a href="https://wa.me/628979513080">0897 951 3080</a>, pada jam layanan Senin&ndash;Jumat 08.00&ndash;20.00 dan Sabtu&ndash;Minggu 09.00&ndash;18.00.</p>
+
+        <hr class="rule">
+        <p class="small">PT Delta Omega Beta<br>Gedung Arva Gondangdia Lantai 1, Jl. Rp. Soeroso No. 40 BC, Gondangdia, DKI Jakarta 10350, Indonesia</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="band">
+  <div class="shell">
+    <div>
+      <p class="eyebrow">Ada pertanyaan soal dokumen ini?</p>
+      <h2 class="h2">Customer Support kami bisa membantu.</h2>
+      <p class="lede">Termasuk menjelaskan bagian yang menurutmu kurang jelas.</p>
+    </div>
+    <div class="band-actions"><a class="btn btn-white" href="v2-codex.html#bantuan">Buka pusat bantuan <span aria-hidden="true">↗</span></a>
+      <a class="tel" href="mailto:cs@deca.co.id">atau email cs@deca.co.id</a></div>
+  </div>
+</section>
+</main>
+
+<footer class="footer" data-od-id="footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand" style="width:122px;height:39px"><img src="logos/deca-b2b-logo.png" width="1080" height="1080" alt="DECA" style="width:122px;height:122px;top:-41px"></div>
+        <p class="tagline">Powering Indonesia's Digital Payment Ecosystem.</p>
+        <p class="tagline" style="font-weight:400">Bayar apa aja, DECA tempatnya.</p>
+      </div>
+      <div>
+        <h3>Jelajahi</h3>
+        <ul>
+          <li><a href="v2-codex.html#ekosistem">Ekosistem</a></li>
+          <li><a href="v2-codex.html#produk">Produk</a></li>
+          <li><a href="v2-codex.html#layanan">Layanan</a></li>
+          <li><a href="v2-codex.html#katalog">Channel pembayaran</a></li>
+          <li><a href="v2-codex.html#solusi">Solusi</a></li>
+          <li><a href="v2-codex.html#biaya">Biaya</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Bantuan</h3>
+        <ul>
+          <li><a href="v2-codex.html#panduan">Panduan</a></li>
+          <li><a href="v2-codex.html#bantuan">Pusat bantuan</a></li>
+          <li><a href="v2-codex.html#keamanan">Keamanan</a></li>
+          <li><a href="v2-codex.html#faq">FAQ</a></li>
+          <li><a href="v2-codex.html#download">Download aplikasi</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Akun &amp; kontak</h3>
+        <ul>
+          <li><a href="v2-codex-register.html">Daftar akun bisnis ↗</a></li>
+          <li><a href="mailto:partnership@deca.co.id">partnership@deca.co.id</a></li>
+          <li><a href="tel:+628138361376">+62 813-8361-376 · partnership</a></li>
+          <li><a href="mailto:cs@deca.co.id">cs@deca.co.id</a></li>
+          <li><a href="https://wa.me/628979513080" target="_blank" rel="noopener">0897 951 3080 · customer support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Perusahaan &amp; legal</h3>
+        <ul>
+          <li><a href="v2-codex.html#tentang">Tentang DECA</a></li>
+          <li><a href="v2-codex.html#tentang">Karier</a></li>
+          <li><a href="v2-codex-legal.html">Syarat &amp; Ketentuan</a></li>
+          <li><a href="v2-codex-legal.html#privasi">Kebijakan Privasi</a></li>
+          <li><a href="v2-codex-peta-situs.html">Peta situs</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> PT Delta Omega Beta · Jakarta, Indonesia</span>
+      <span>Gedung Arva Gondangdia Lantai 1, Jl. Rp. Soeroso No. 40 BC, Gondangdia, DKI Jakarta 10350</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var all = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var burger = document.getElementById('burger'), mob = document.getElementById('nav-mobile');
+  if (burger && mob) {
+    burger.addEventListener('click', function () {
+      var open = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!open));
+      burger.setAttribute('aria-label', open ? 'Buka menu' : 'Tutup menu');
+      mob.classList.toggle('open', !open);
+    });
+  }
+  all('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
+  var reveal = function (el) { el.classList.add('is-in'); };
+  var marks = all('[data-reveal]');
+  if (!('IntersectionObserver' in window)) { marks.forEach(reveal); }
+  else {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
+    marks.forEach(function (el) { io.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>

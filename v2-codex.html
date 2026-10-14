@@ -74,7 +74,9 @@ section{padding:var(--s10) 0}
 .notice-bar i{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
 
 /* ---------- header ---------- */
-.site-header{position:sticky;top:0;z-index:40;background:rgba(248,251,248,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+/* Derived from --paper rather than repeating its value, so the header tint
+   cannot drift from the canvas it sits on. */
+.site-header{position:sticky;top:0;z-index:40;background:color-mix(in oklab,var(--paper) 94%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .header-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);height:78px}
 .brand{position:relative;width:112px;height:50px;overflow:hidden;flex:none}
 .brand img{position:absolute;width:112px;height:112px;max-width:none;left:0;top:-38px}
@@ -95,12 +97,13 @@ section{padding:var(--s10) 0}
 .nav-mobile a:hover{background:var(--green-pale)}
 
 /* ---------- buttons ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:49px;padding:0 21px;border-radius:var(--r-btn);font-size:13px;font-weight:700;transition:transform .2s,box-shadow .2s,background .2s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:49px;padding:0 21px;border-radius:var(--r-btn);font-size:13px;font-weight:700;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s,color .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
 .btn-primary:hover{box-shadow:0 10px 22px rgb(6 168 50 / .22)}
 .btn-quiet{color:var(--ink);padding:0 6px}
-.btn-quiet i{font-style:normal;color:var(--green-ink)}
+.btn-quiet i{font-style:normal;color:var(--green-ink);transition:transform .2s}
+.btn-quiet:hover i{transform:translateX(-3px)}
 .btn-ghost{border:1px solid var(--line);background:var(--white);color:var(--ink);min-height:44px;padding:0 18px;font-size:13px}
 .btn-ghost:hover{border-color:var(--green-ink);color:var(--green-ink)}
 .btn-small{min-height:39px;padding:0 16px;font-size:12px;gap:10px}
@@ -164,6 +167,42 @@ section{padding:var(--s10) 0}
 .checks li{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:14px;color:var(--muted)}
 .checks li::before{content:"✓";color:var(--green-ink);font-weight:700}
 
+/* ---------- produk ----------
+   Scoped to #produk. Two changes: the indicator is one ink that slides
+   between tabs rather than a bar drawn on each of them, and an incoming panel
+   is choreographed instead of being switched in flat. */
+@keyframes prodIn{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
+@keyframes prodItem{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+
+/* Neither animation needs re-triggering by hand: a panel returning from
+   display:none is rebuilt, so its animations run again on their own. */
+#produk .panel:not([hidden]) .panel-grid > div:first-child{animation:prodIn .45s var(--ease) both}
+#produk .panel:not([hidden]) .panel-art{animation:prodIn .5s var(--ease) .09s both}
+#produk .panel:not([hidden]) .checks li{animation:prodItem .35s var(--ease) both}
+#produk .panel:not([hidden]) .checks li:nth-child(1){animation-delay:.15s}
+#produk .panel:not([hidden]) .checks li:nth-child(2){animation-delay:.21s}
+#produk .panel:not([hidden]) .checks li:nth-child(3){animation-delay:.27s}
+
+/* Hover used to paint the same tint as selected, so a hovered tab looked
+   chosen. It is now a half-strength tint of the same hue, and the label eases
+   across a little — enough to feel responsive, not enough to shift layout. */
+#produk .tab{transition:background .25s var(--ease),color .25s var(--ease)}
+#produk .tab > span{display:block;transition:translate .25s var(--ease)}
+#produk .tab:hover:not([aria-selected="true"]){background:color-mix(in oklab,var(--green-pale) 32%,var(--white))}
+#produk .tab:hover:not([aria-selected="true"]) > span{translate:2px 0}
+
+/* Desktop only. The three columns are equal here, so one ink can slide
+   between them; below 900px the tabs stack at unequal heights, where a
+   sliding ink would not line up, so the per-tab left bar stays. */
+@media (min-width:900px){
+  #produk .tabs{position:relative}
+  #produk .tab[aria-selected="true"]{box-shadow:none}
+  #produk .tabs::after{content:"";position:absolute;left:0;bottom:0;width:33.3333%;height:3px;
+    background:var(--green-ink);border-radius:3px 3px 0 0;
+    transform:translateX(calc(var(--tab-i,0) * 100%));
+    transition:transform .5s var(--spring)}
+}
+
 /* ---------- feature cards ---------- */
 .card{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s4);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s,border-color .25s}
 .card:hover{transform:translateY(-4px);border-color:var(--line-strong);box-shadow:0 16px 35px rgb(20 53 29 / .06)}
@@ -183,6 +222,69 @@ section{padding:var(--s10) 0}
 .steps li::before{counter-increment:s;content:counter(s);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--green-pale);color:var(--green-ink);font-family:var(--display);font-weight:750;font-size:12px}
 .steps strong{color:var(--ink);font-weight:700}
 
+/* ---------- cara pakai ----------
+   Every rule below is scoped to #cara-pakai. Two faults, one of them a bug:
+
+   1. `.split` sets `display:grid` from the author sheet, which outranks the
+      UA sheet's `[hidden]{display:none}`. `hidden` therefore did nothing, and
+      all four flows rendered at once — 3,946px of stacked step lists, which is
+      exactly what the section looked like.
+   2. With one flow finally showing, the list was still rows of grey text with
+      numerals floating beside them and nothing joining one step to the next. */
+#cara-pakai .split[hidden]{display:none}
+#cara-pakai .split{align-items:start}
+
+#cara-pakai .flow-card{background:var(--white);border:1px solid var(--line);
+  border-radius:var(--r-panel);padding:var(--s5) var(--s4)}
+#cara-pakai .flow-head{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:var(--s3);padding-bottom:var(--s4);margin-bottom:var(--s4);border-bottom:1px solid var(--line)}
+#cara-pakai .flow-head h3{font-size:19px;margin:0}
+#cara-pakai .flow-kicker{font-size:10px;letter-spacing:.12em;font-weight:700;
+  color:var(--green-ink);text-transform:uppercase;margin-bottom:7px}
+#cara-pakai .flow-count{flex:none;font-size:11px;font-weight:700;color:var(--green-ink);
+  background:var(--green-pale);padding:5px 12px;border-radius:14px;white-space:nowrap}
+
+/* The rail. Each numeral sits on a rule that runs on to the next, so the list
+   reads as one ordered path instead of seven unrelated lines. The numeral is
+   lifted above the rule; without that the rule paints over the disc, since
+   ::after comes later in paint order than ::before. */
+#cara-pakai .steps{gap:0}
+#cara-pakai .steps li{position:relative;grid-template-columns:30px 1fr;gap:var(--s3);
+  align-items:start;padding-bottom:var(--s3)}
+#cara-pakai .steps li:last-child{padding-bottom:0}
+#cara-pakai .steps li::before{position:relative;z-index:1;width:30px;height:30px;font-size:12px}
+#cara-pakai .steps li:not(:last-child)::after{content:"";position:absolute;z-index:0;
+  left:14px;top:34px;bottom:2px;width:2px;border-radius:2px;background:var(--line-strong)}
+
+/* ---------- cara pakai: auto-rotation ----------
+   Scoped to #cara-pakai. A flow that has just rotated in rises and fades, and
+   its steps follow in sequence, so the change reads as a hand-off rather than
+   a swap. Neither needs restarting by hand: a panel coming back from
+   display:none is rebuilt from scratch, and its animations run again. */
+@keyframes flowIn{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
+@keyframes stepIn{from{opacity:0;translate:-12px 0}to{opacity:1;translate:0 0}}
+@keyframes caraProgress{from{width:0}to{width:100%}}
+
+#cara-pakai .split[role="tabpanel"]:not([hidden]){animation:flowIn .5s var(--ease) both}
+#cara-pakai .split[role="tabpanel"]:not([hidden]) .steps li{animation:stepIn .5s var(--ease) both}
+#cara-pakai .steps li:nth-child(1){animation-delay:.10s}
+#cara-pakai .steps li:nth-child(2){animation-delay:.16s}
+#cara-pakai .steps li:nth-child(3){animation-delay:.22s}
+#cara-pakai .steps li:nth-child(4){animation-delay:.28s}
+#cara-pakai .steps li:nth-child(5){animation-delay:.34s}
+#cara-pakai .steps li:nth-child(6){animation-delay:.40s}
+#cara-pakai .steps li:nth-child(7){animation-delay:.46s}
+#cara-pakai .steps li:nth-child(8){animation-delay:.52s}
+
+/* Time remaining on the current flow. The track is sized to the chips rather
+   than the full column, so it does not trail off as an empty rule. */
+#cara-tabs{position:relative;width:fit-content;padding-bottom:12px}
+#cara-tabs::before{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  border-radius:2px;background:var(--line)}
+#cara-tabs::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;
+  border-radius:2px;background:var(--green-ink)}
+#cara-tabs.is-running::after{animation:caraProgress var(--cycle,8s) linear both}
+
 /* ---------- table ---------- */
 .tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-card);background:var(--white)}
 table{border-collapse:collapse;width:100%;min-width:520px}
@@ -195,6 +297,19 @@ tbody tr:hover td{background:var(--paper)}
 .badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
 .badge-live{background:var(--green-ink);color:var(--white)}
 .badge-soon{background:var(--green-pale);color:var(--green-ink);border:1px solid var(--line)}
+
+/* ---------- katalog logos ----------
+   Scoped to #katalog. The band is a fixed 52px so every card's kicker starts
+   on the same line whether its mark is a wide wordmark or a portrait glyph —
+   sizing it to content left the one text-only card visibly out of step. */
+#katalog .node-logo{display:grid;place-items:center;height:52px;margin-bottom:var(--s3);
+  border-bottom:1px solid var(--line)}
+#katalog .node-logo img{max-width:100%;max-height:32px;width:auto;height:auto;object-fit:contain}
+/* PDAM is not a brand — it is the generic name for regionally owned water
+   utilities, each with its own mark. There is nothing correct to show, so this
+   one is set as a label rather than dressed up to look like a logo. */
+#katalog .node-logo.is-text{font-family:var(--display);font-weight:750;font-size:16px;
+  letter-spacing:-.03em;color:var(--muted)}
 
 /* ---------- solutions ---------- */
 .solution{border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);padding:var(--s4);transition:transform .25s,box-shadow .25s,border-color .25s}
@@ -272,7 +387,6 @@ tbody tr:hover td{background:var(--paper)}
 @keyframes orbit{to{rotate:360deg}}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes bar{from{scale:1 .22;opacity:.45}to{scale:1 1;opacity:1}}
-@keyframes rail{to{translate:-50% 0}}
 @keyframes scanline{0%,100%{opacity:.2;top:24%}50%{opacity:.85;top:72%}}
 @keyframes halo{0%{scale:.85;opacity:.5}70%,100%{scale:1.7;opacity:0}}
 @keyframes sheen{0%{translate:-130% 0}55%,100%{translate:150% 0}}
@@ -366,51 +480,99 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
 .chip-api>span:first-child{background:var(--blue-pale);color:var(--blue-ink)}
 .chip-api i{color:var(--blue-ink)}
 
-/* ---------- orbit map ---------- */
-/* A compact emblem rather than a large empty field. The outer ring carries
-   the four roles it stands for — the source put its nodes on the radial map,
-   and without them the circles were 400px of nothing. Radii are set per
-   breakpoint so the whole diagram stays inside the shell even at 320px. */
-.map{position:relative;display:grid;place-items:center;padding:var(--s4) 0;min-height:280px}
-.map-center{position:relative;display:grid;place-items:center;gap:9px;text-align:center;z-index:2}
-.map-logo{width:54px;height:54px;border-radius:16px;overflow:hidden;background:var(--white);
-  border:1px solid var(--line);box-shadow:0 12px 30px rgb(16 46 30 / .1);position:relative}
-.map-logo img{position:absolute;width:54px;height:54px;left:0;top:-18px;max-width:none}
-.map-center small{font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--muted)}
-.map-ring{position:absolute;border-radius:50%;border:1px dashed var(--line);pointer-events:none}
-.map-ring.one{width:108px;height:108px;animation:orbit 44s linear infinite}
-.map-ring.two{width:172px;height:172px;border-style:solid;border-color:var(--line);animation:orbit 68s linear infinite reverse}
-.map-ring::after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;
-  background:var(--green-icon);top:-3px;left:calc(50% - 3px)}
-.map-ring.two::after{background:var(--blue-ink)}
-.map-tag{position:absolute;left:50%;top:50%;z-index:3;padding:4px 10px;border-radius:14px;
-  white-space:nowrap;background:var(--white);border:1px solid var(--line);
-  font-size:10px;font-weight:600;color:var(--ink);box-shadow:0 6px 16px rgb(16 46 30 / .07)}
-.map-tag.t1{translate:-50% calc(-50% - 86px)}
-.map-tag.t2{translate:calc(-50% + 86px) -50%}
-.map-tag.t3{translate:-50% calc(-50% + 86px)}
-.map-tag.t4{translate:calc(-50% - 86px) -50%}
-@media (min-width:640px){
-  .map{min-height:320px}
-  .map-ring.one{width:132px;height:132px}
-  .map-ring.two{width:212px;height:212px}
-  .map-tag{font-size:11px;padding:5px 12px}
-  .map-tag.t1{translate:-50% calc(-50% - 106px)}
-  .map-tag.t2{translate:calc(-50% + 106px) -50%}
-  .map-tag.t3{translate:-50% calc(-50% + 106px)}
-  .map-tag.t4{translate:calc(-50% - 106px) -50%}
-}
+/* ---------- orbit map ----------
+   Everything derives from one radius. The diagram used to be pinned at a
+   212px circle inside a 703px column — 30% of its measure — which read as a
+   small emblem lost in whitespace. --r is the outer radius and every other
+   measurement is a multiple of it, so the whole thing scales as one object
+   and the labels keep their proportions instead of drifting off the ring.
 
-/* ---------- payment-rail marquee ---------- */
-.rail{position:relative;overflow:hidden;margin-top:var(--s6);padding:16px 0;
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  -webkit-mask-image:linear-gradient(90deg,transparent,var(--ink) 8%,var(--ink) 92%,transparent);
-  mask-image:linear-gradient(90deg,transparent,var(--ink) 8%,var(--ink) 92%,transparent)}
-.rail-track{display:flex;width:max-content;gap:var(--s6);animation:rail 38s linear infinite}
-.rail:hover .rail-track{animation-play-state:paused}
-.rail-item{display:flex;align-items:center;gap:9px;white-space:nowrap;
-  font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:-.03em;color:var(--ink)}
-.rail-item::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--green-icon);flex:none}
+   Two animations doing different jobs: the rings turn slowly with a marker
+   riding each, and a pulse leaves the centre every few seconds. That is the
+   section's own line — every transaction has its route — rather than motion
+   for its own sake. */
+.map{position:relative;display:grid;place-items:center;padding:var(--s4) 0;
+  --r:clamp(72px,25vw,220px);
+  --logo:calc(var(--r)*.62);          /* tile width; the wordmark sets the height */
+  min-height:calc(var(--r)*2 + 100px)}
+.map-glow{position:absolute;width:calc(var(--r)*1.8);height:calc(var(--r)*1.8);
+  border-radius:50%;background:radial-gradient(circle,var(--green-pale),transparent 70%)}
+.map-center{position:relative;display:grid;place-items:center;gap:10px;text-align:center;z-index:2}
+/* The source is a 1080-square, but its artwork is only a band across the
+   middle — measured, the ink runs y 34.4%–65.5%, centred on 50%. The tile was
+   square and the image was shifted up, so a third of it sat empty; at 54px
+   that was invisible, and scaling the diagram up exposed it. The tile now
+   takes the wordmark's own aspect and crops to the band. */
+.map-logo{position:relative;width:var(--logo);height:calc(var(--logo)*.357);
+  border-radius:calc(var(--logo)*.11);overflow:hidden;background:var(--white);
+  border:1px solid var(--line);box-shadow:0 12px 30px rgb(16 46 30 / .12)}
+/* Source is square, so scaling it to 94% of the tile makes it 0.94·--logo
+   tall; the tile is 0.357·--logo, which is 38% of that. Offsetting by 81.6%
+   of the tile height lands the visible window on image rows 31%–69%, and the
+   artwork occupies 34.4%–65.5% — so it sits centred with even margin. */
+.map-logo img{position:absolute;left:3%;width:94%;height:auto;max-width:none;top:-81.6%}
+/* green-ink, not muted: the label sits over the new centre glow, where muted
+   drops to 4.25:1. This also puts it in the page's eyebrow voice. */
+.map-center small{font-size:11px;letter-spacing:.12em;font-weight:700;color:var(--green-ink)}
+.map-ring{position:absolute;border-radius:50%;border:1px solid var(--line);pointer-events:none}
+.map-ring.one{width:calc(var(--r)*1.24);height:calc(var(--r)*1.24);
+  border-style:dashed;animation:orbit 44s linear infinite}
+.map-ring.two{width:calc(var(--r)*2);height:calc(var(--r)*2);
+  animation:orbit 68s linear infinite reverse}
+.map-ring::after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;
+  background:var(--green-icon);top:-5px;left:calc(50% - 4.5px);
+  box-shadow:0 0 0 4px var(--green-pale)}
+.map-ring.two::after{background:var(--blue-ink);box-shadow:0 0 0 4px var(--blue-pale)}
+/* Base opacity is 0, which is also what reduced-motion settles on once the
+   global duration override has run the animation out — so the pulse leaves
+   nothing behind rather than parking a ring on top of the outer one. */
+.map-ping{position:absolute;width:calc(var(--r)*2);height:calc(var(--r)*2);border-radius:50%;
+  border:1px solid var(--green-icon);opacity:0;animation:ping 4.6s var(--ease) infinite}
+.map-ping + .map-ping{animation-delay:2.3s}
+@keyframes ping{0%{scale:.34;opacity:.5}72%,100%{scale:1;opacity:0}}
+.map-tag{position:absolute;left:50%;top:50%;z-index:3;padding:6px 14px;border-radius:16px;
+  white-space:nowrap;background:var(--white);border:1px solid var(--line);
+  font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:-.02em;color:var(--ink);
+  box-shadow:0 6px 16px rgb(16 46 30 / .08)}
+.map-tag.t1{translate:-50% calc(-50% - var(--r))}
+.map-tag.t2{translate:calc(-50% + var(--r)) -50%}
+.map-tag.t3{translate:-50% calc(-50% + var(--r))}
+.map-tag.t4{translate:calc(-50% - var(--r)) -50%}
+
+/* ---------- payment rails ----------
+   Replaces the text marquee that used to sit here. Only QRIS and BI-FAST are
+   brands with a mark of their own; Bank, Virtual Account, E-Money and Payment
+   Gateway name categories, so they take a drawn glyph rather than a logo
+   borrowed from one arbitrary member of the category.
+   The sweep is the point: a transaction is shown being routed, chip by chip,
+   instead of the row simply sliding past. */
+.rail{position:relative;margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line)}
+.rail-title{font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--muted);
+  text-transform:uppercase;margin-bottom:var(--s3)}
+.rail-list{display:flex;flex-wrap:wrap;gap:10px}
+.rail-item{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 16px;
+  border:1px solid var(--line);border-radius:14px;background:var(--white);
+  animation:route 9s ease-in-out infinite}
+.rail:hover .rail-item{animation-play-state:paused}
+.rail-mark{display:grid;place-items:center;width:22px;height:22px;flex:none}
+.rail-mark svg{width:20px;height:20px;color:var(--green-ink)}
+.rail-logo{height:20px;width:auto;display:block}
+.rail-name{font-family:var(--display);font-weight:700;font-size:13.5px;
+  letter-spacing:-.03em;color:var(--ink);white-space:nowrap}
+
+/* Each chip lights in turn, left to right, then the row rests. The stagger is
+   what makes it read as a route rather than six things blinking together. */
+@keyframes route{
+  0%,100%{background:var(--white);border-color:var(--line)}
+  3%{background:var(--green-pale);border-color:var(--green-ink)}
+  12%{background:var(--white);border-color:var(--line)}
+}
+.rail-item:nth-child(1){animation-delay:0s}
+.rail-item:nth-child(2){animation-delay:.4s}
+.rail-item:nth-child(3){animation-delay:.8s}
+.rail-item:nth-child(4){animation-delay:1.2s}
+.rail-item:nth-child(5){animation-delay:1.6s}
+.rail-item:nth-child(6){animation-delay:2s}
 
 /* ---------- product art: windows and handsets ---------- */
 .win{background:var(--white);border:1px solid var(--line);border-radius:var(--r-panel);
@@ -561,11 +723,10 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
   html.js [data-reveal].is-in{animation:none}
   html.js [data-group]>*{opacity:1}
   html.js [data-group].is-in>*{animation:none}
-  .stage-glow,.chip-qris,.chip-api,.map-ring,.rail-track,.phone-scan,
+  .stage-glow,.chip-qris,.chip-api,.map-ring,.rail-item,.phone-scan,
   .wallet::after,.photo-live::after,.photo-live,.bars i{animation:none}
   .chart-line{stroke-dashoffset:0;animation:none}
   .chart-fill{opacity:1;animation:none}
-  .rail{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
 </style>
 <script>document.documentElement.classList.add('js');</script>
@@ -692,6 +853,9 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
     <!-- Decorative diagram: the four nodes below carry its meaning, so it is
          hidden from assistive tech rather than read out as a picture. -->
     <div class="map" data-reveal data-from="near" aria-hidden="true">
+      <span class="map-glow"></span>
+      <span class="map-ping"></span>
+      <span class="map-ping"></span>
       <span class="map-ring two"></span>
       <span class="map-ring one"></span>
       <div class="map-center">
@@ -716,20 +880,31 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
          second copy precisely where the first began. Hovering pauses it, and
          the duplicate half is hidden from assistive tech. -->
     <div class="rail" data-od-id="metode" aria-label="Jalur pembayaran yang didukung DECA">
-      <div class="rail-track">
-        <span class="rail-item">Bank</span>
-        <span class="rail-item">QRIS</span>
-        <span class="rail-item">BI-FAST</span>
-        <span class="rail-item">Virtual Account</span>
-        <span class="rail-item">E-Money</span>
-        <span class="rail-item">Payment Gateway</span>
-        <span class="rail-item" aria-hidden="true">Bank</span>
-        <span class="rail-item" aria-hidden="true">QRIS</span>
-        <span class="rail-item" aria-hidden="true">BI-FAST</span>
-        <span class="rail-item" aria-hidden="true">Virtual Account</span>
-        <span class="rail-item" aria-hidden="true">E-Money</span>
-        <span class="rail-item" aria-hidden="true">Payment Gateway</span>
-      </div>
+      <p class="rail-title">Jalur pembayaran</p>
+      <ul class="rail-list">
+        <li class="rail-item" data-od-id="rail-bank">
+          <span class="rail-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5 12 4l9 5.5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M5.5 10.5v6.5M9.5 10.5v6.5M14.5 10.5v6.5M18.5 10.5v6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span class="rail-name">Bank</span>
+        </li>
+        <li class="rail-item" data-od-id="rail-qris">
+          <img class="rail-logo" src="logos/partners/qris.svg" width="46" height="17" alt="QRIS">
+        </li>
+        <li class="rail-item" data-od-id="rail-bifast">
+          <img class="rail-logo" src="logos/partners/bifast.png" width="98" height="37" alt="BI-FAST">
+        </li>
+        <li class="rail-item" data-od-id="rail-va">
+          <span class="rail-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9.5 3.5 7.5 20.5M16.5 3.5 14.5 20.5M3.5 9h17M3 15h17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span class="rail-name">Virtual Account</span>
+        </li>
+        <li class="rail-item" data-od-id="rail-emoney">
+          <span class="rail-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M2.5 10h19" stroke="currentColor" stroke-width="1.7"/><path d="M6 15h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span class="rail-name">E-Money</span>
+        </li>
+        <li class="rail-item" data-od-id="rail-pg">
+          <span class="rail-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="8" y="4" width="8" height="16" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M2.5 12h5M16.5 12h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.5 12h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span class="rail-name">Payment Gateway</span>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -743,7 +918,7 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
       <p class="lede">Tiga produk. Satu ekosistem. Pilih layanan yang sesuai dengan kebutuhanmu.</p>
     </div>
 
-    <div class="tabs" role="tablist" aria-label="Produk DECA" data-od-id="produk-tabs">
+    <div class="tabs" id="produk-tabs" role="tablist" aria-label="Produk DECA" data-od-id="produk-tabs">
       <button class="tab" role="tab" id="tab-cash" aria-controls="panel-cash" aria-selected="true"><span>01 · DECA Cash<small>Dompet digital</small></span></button>
       <button class="tab" role="tab" id="tab-cashier" aria-controls="panel-cashier" aria-selected="false"><span>02 · DECA for Merchant<small>QRIS &amp; merchant</small></span></button>
       <button class="tab" role="tab" id="tab-business" aria-controls="panel-business" aria-selected="false"><span>03 · DECA Business<small>Dashboard &amp; API</small></span></button>
@@ -972,21 +1147,21 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
     <p class="skip" id="svc-status" role="status" style="position:absolute;left:-9999px"></p>
 
     <div class="grid grid-4" id="svc-grid" data-od-id="katalog-grid" data-group>
-      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Telkomsel</h3><p><span class="badge badge-live">Tersedia</span></p></article>
-      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Indosat Ooredoo</h3><p><span class="badge badge-live">Tersedia</span></p></article>
-      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>XL Axiata</h3><p><span class="badge badge-live">Tersedia</span></p></article>
-      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Tri (3)</h3><p><span class="badge badge-live">Tersedia</span></p></article>
-      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>AXIS</h3><p><span class="badge badge-live">Tersedia</span></p></article>
-      <article class="node" data-cat="pulsa"><p class="kicker">PULSA &amp; DATA</p><h3>Smartfren</h3><p><span class="badge badge-live">Tersedia</span></p></article>
-      <article class="node" data-cat="energi"><p class="kicker">LISTRIK &amp; ENERGI</p><h3>PLN</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="energi"><p class="kicker">LISTRIK &amp; ENERGI</p><h3>PGN</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="air"><p class="kicker">AIR</p><h3>PDAM</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="internet"><p class="kicker">INTERNET &amp; TV</p><h3>IndiHome</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="internet"><p class="kicker">INTERNET &amp; TV</p><h3>Telkom</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="internet"><p class="kicker">INTERNET &amp; TV</p><h3>Speedy</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="kesehatan"><p class="kicker">KESEHATAN</p><h3>BPJS Kesehatan</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="dompet"><p class="kicker">DOMPET &amp; TRANSPORTASI</p><h3>Gojek</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
-      <article class="node" data-cat="dompet"><p class="kicker">DOMPET &amp; TRANSPORTASI</p><h3>e-Money</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="pulsa" data-od-id="svc-telkomsel"><span class="node-logo"><img src="logos/partners/telkomsel.svg" width="1000" height="171" alt=""></span><p class="kicker">PULSA &amp; DATA</p><h3>Telkomsel</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa" data-od-id="svc-indosat"><span class="node-logo"><img src="logos/partners/indosat.svg" width="135" height="47" alt=""></span><p class="kicker">PULSA &amp; DATA</p><h3>Indosat Ooredoo</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa" data-od-id="svc-xl"><span class="node-logo"><img src="logos/partners/xl.svg" width="1000" height="248" alt=""></span><p class="kicker">PULSA &amp; DATA</p><h3>XL Axiata</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa" data-od-id="svc-tri"><span class="node-logo"><img src="logos/partners/tri.png" width="416" height="540" alt=""></span><p class="kicker">PULSA &amp; DATA</p><h3>Tri (3)</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa" data-od-id="svc-axis"><span class="node-logo"><img src="logos/partners/axis.svg" width="58" height="40" alt=""></span><p class="kicker">PULSA &amp; DATA</p><h3>AXIS</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="pulsa" data-od-id="svc-smartfren"><span class="node-logo"><img src="logos/partners/smartfren.svg" width="1000" height="218" alt=""></span><p class="kicker">PULSA &amp; DATA</p><h3>Smartfren</h3><p><span class="badge badge-live">Tersedia</span></p></article>
+      <article class="node" data-cat="energi" data-od-id="svc-pln"><span class="node-logo"><img src="logos/partners/pln.svg" width="1002" height="359" alt=""></span><p class="kicker">LISTRIK &amp; ENERGI</p><h3>PLN</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="energi" data-od-id="svc-pgn"><span class="node-logo"><img src="logos/partners/pgn.svg" width="58" height="17" alt=""></span><p class="kicker">LISTRIK &amp; ENERGI</p><h3>PGN</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="air" data-od-id="svc-pdam"><span class="node-logo is-text" aria-hidden="true">PDAM</span><p class="kicker">AIR</p><h3>PDAM</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="internet" data-od-id="svc-indihome"><span class="node-logo"><img src="logos/partners/indihome.svg" width="1000" height="177" alt=""></span><p class="kicker">INTERNET &amp; TV</p><h3>IndiHome</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="internet" data-od-id="svc-telkom"><span class="node-logo"><img src="logos/partners/telkom.png" width="250" height="138" alt=""></span><p class="kicker">INTERNET &amp; TV</p><h3>Telkom</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="internet" data-od-id="svc-speedy"><span class="node-logo"><img src="logos/partners/speedy.svg" width="155" height="45" alt=""></span><p class="kicker">INTERNET &amp; TV</p><h3>Speedy</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="kesehatan" data-od-id="svc-bpjs"><span class="node-logo"><img src="logos/partners/bpjs.svg" width="270" height="43" alt=""></span><p class="kicker">KESEHATAN</p><h3>BPJS Kesehatan</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="dompet" data-od-id="svc-gojek"><span class="node-logo"><img src="logos/partners/gojek.svg" width="112" height="32" alt=""></span><p class="kicker">DOMPET &amp; TRANSPORTASI</p><h3>Gojek</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
+      <article class="node" data-cat="dompet" data-od-id="svc-emoney"><span class="node-logo"><img src="logos/partners/emoney.svg" width="379" height="83" alt=""></span><p class="kicker">DOMPET &amp; TRANSPORTASI</p><h3>e-Money</h3><p><span class="badge badge-soon">Segera hadir</span></p></article>
     </div>
     <p class="lede" id="svc-empty" hidden style="margin-top:var(--s4)">Belum ada layanan di kategori ini.</p>
   </div>
@@ -1001,7 +1176,7 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
       <p class="lede">Empat alur, langkahnya sama persis dengan yang ada di aplikasi DECA. Pilih salah satu untuk melihat langkahnya.</p>
     </div>
 
-    <div class="methods" role="tablist" aria-label="Pilih alur pemakaian" style="border-top:0;padding-top:0;margin-top:0;margin-bottom:var(--s5)" data-od-id="cara-tabs">
+    <div class="methods" id="cara-tabs" role="tablist" aria-label="Pilih alur pemakaian" style="border-top:0;padding-top:0;margin-top:0;margin-bottom:var(--s5)" data-od-id="cara-tabs">
       <button class="chip" role="tab" id="ftop" aria-controls="flow-topup" aria-selected="true" style="cursor:pointer;font-weight:700">Top up DECA Cash</button>
       <button class="chip" role="tab" id="fprem" aria-controls="flow-premium" aria-selected="false" style="cursor:pointer">Upgrade akun</button>
       <button class="chip" role="tab" id="fpuls" aria-controls="flow-pulsa" aria-selected="false" style="cursor:pointer">Beli pulsa</button>
@@ -1009,8 +1184,11 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
     </div>
 
     <div class="split" role="tabpanel" id="flow-topup" aria-labelledby="ftop" data-od-id="cara-topup">
-      <div>
-        <h3 style="font-size:19px;margin-bottom:var(--s3)">Top up DECA Cash</h3>
+      <div class="flow-card">
+        <div class="flow-head">
+          <div><p class="flow-kicker">Alur 01</p><h3>Top up DECA Cash</h3></div>
+          <span class="flow-count">7 langkah</span>
+        </div>
         <ol class="steps">
           <li><span>Buka Aplikasi DECA, pilih <strong>Topup Saldo</strong>.</span></li>
           <li><span>Pilih metode topup <strong>Lainnya</strong>.</span></li>
@@ -1028,8 +1206,11 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
     </div>
 
     <div class="split" role="tabpanel" id="flow-premium" aria-labelledby="fprem" hidden data-od-id="cara-premium">
-      <div>
-        <h3 style="font-size:19px;margin-bottom:var(--s3)">Upgrade akun ke DECA Premium</h3>
+      <div class="flow-card">
+        <div class="flow-head">
+          <div><p class="flow-kicker">Alur 02</p><h3>Upgrade akun ke DECA Premium</h3></div>
+          <span class="flow-count">8 langkah</span>
+        </div>
         <ol class="steps">
           <li><span>Buka Aplikasi DECA, pilih <strong>Upgrade Akun</strong>.</span></li>
           <li><span>Setelah melihat benefit dari DECA Premium, pilih <strong>Upgrade Sekarang</strong>.</span></li>
@@ -1048,8 +1229,11 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
     </div>
 
     <div class="split" role="tabpanel" id="flow-pulsa" aria-labelledby="fpuls" hidden data-od-id="cara-pulsa">
-      <div>
-        <h3 style="font-size:19px;margin-bottom:var(--s3)">Beli pulsa &amp; paket data</h3>
+      <div class="flow-card">
+        <div class="flow-head">
+          <div><p class="flow-kicker">Alur 03</p><h3>Beli pulsa &amp; paket data</h3></div>
+          <span class="flow-count">5 langkah</span>
+        </div>
         <ol class="steps">
           <li><span>Buka Aplikasi DECA, pilih menu <strong>Pulsa</strong>.</span></li>
           <li><span>Isi <strong>Nomor Tujuan</strong> dan <strong>Denom Pulsa</strong> yang akan diisi.</span></li>
@@ -1065,8 +1249,11 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
     </div>
 
     <div class="split" role="tabpanel" id="flow-transfer" aria-labelledby="ftran" hidden data-od-id="cara-transfer">
-      <div>
-        <h3 style="font-size:19px;margin-bottom:var(--s3)">Transfer sesama akun DECA Cash</h3>
+      <div class="flow-card">
+        <div class="flow-head">
+          <div><p class="flow-kicker">Alur 04</p><h3>Transfer sesama akun DECA Cash</h3></div>
+          <span class="flow-count">8 langkah</span>
+        </div>
         <ol class="steps">
           <li><span>Buka Aplikasi DECA, pilih menu <strong>Transfer</strong>.</span></li>
           <li><span>Pilih menu <strong>Sesama akun DECA Cash</strong>.</span></li>
@@ -1316,17 +1503,17 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
       <article class="guide" data-od-id="panduan-topup" data-reveal style="--delay:0ms">
         <div class="guide-top"><p class="guide-tag">Panduan</p><h3>Cara top up DECA Cash tanpa biaya admin</h3></div>
         <p>7 langkah dari buka aplikasi sampai saldo kamu bertambah, termasuk cara memakai kode unik.</p>
-        <div class="guide-foot"><a class="link" href="deca-artikel-cara-topup.html">Baca panduan <i>↗</i></a><b>7 langkah</b></div>
+        <div class="guide-foot"><a class="link" href="v2-codex-panduan-topup.html">Baca panduan <i>↗</i></a><b>7 langkah</b></div>
       </article>
       <article class="guide" data-od-id="panduan-premium" data-reveal style="--delay:90ms">
         <div class="guide-top"><p class="guide-tag">Akun</p><h3>Cara upgrade akun ke DECA Premium</h3></div>
         <p>Siapkan E-KTP, ikuti 8 langkah verifikasi, dan pahami kenapa prosesnya butuh 1x24 jam kerja.</p>
-        <div class="guide-foot"><a class="link" href="deca-artikel-upgrade-akun.html">Baca panduan <i>↗</i></a><b>8 langkah</b></div>
+        <div class="guide-foot"><a class="link" href="v2-codex-panduan-upgrade.html">Baca panduan <i>↗</i></a><b>8 langkah</b></div>
       </article>
       <article class="guide" data-od-id="panduan-transfer" data-reveal style="--delay:180ms">
         <div class="guide-top"><p class="guide-tag">Transaksi</p><h3>Cara transfer sesama akun DECA Cash</h3></div>
         <p>8 langkah transfer instan ke rekening baru, dari isi nomor akun tujuan sampai masukkan PIN.</p>
-        <div class="guide-foot"><a class="link" href="deca-artikel-transfer.html">Baca panduan <i>↗</i></a><b>8 langkah</b></div>
+        <div class="guide-foot"><a class="link" href="v2-codex-panduan-transfer.html">Baca panduan <i>↗</i></a><b>8 langkah</b></div>
       </article>
     </div>
   </div>
@@ -1482,9 +1669,9 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
         <ul>
           <li><a href="#tentang">Tentang DECA</a></li>
           <li><a href="#tentang">Karier</a></li>
-          <li><a href="deca-legal.html">Syarat &amp; Ketentuan</a></li>
-          <li><a href="deca-legal.html#privasi">Kebijakan Privasi</a></li>
-          <li><a href="deca-peta-situs.html">Peta situs</a></li>
+          <li><a href="v2-codex-legal.html">Syarat &amp; Ketentuan</a></li>
+          <li><a href="v2-codex-legal.html#privasi">Kebijakan Privasi</a></li>
+          <li><a href="v2-codex-peta-situs.html">Peta situs</a></li>
         </ul>
       </div>
     </div>
@@ -1544,6 +1731,100 @@ html.js [data-group].is-in>*:nth-child(n+9){animation-delay:560ms}
       });
     });
   });
+
+  /* Auto-rotation for the how-to flows, scoped to this one tablist — the
+     product tabs above stay user-driven.
+
+     Auto-advancing content is a WCAG 2.2.2 concern, so it offers the reader
+     every exit: it never starts under reduced-motion, holding the pointer
+     over the section or focusing into it pauses the countdown, choosing a tab
+     stops it for good, and it does not run while the section is off-screen. */
+  (function () {
+    var list = document.getElementById('cara-tabs');
+    var section = document.getElementById('cara-pakai');
+    if (!list || !section) return;
+    var btns = all('[role="tab"]', list);
+    if (btns.length < 2) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var CYCLE = 8000;                 /* one source of truth — CSS reads --cycle */
+    var timer = null, stopped = false, onScreen = false, held = false;
+
+    list.style.setProperty('--cycle', (CYCLE / 1000) + 's');
+
+    function current() {
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i].getAttribute('aria-selected') === 'true') return i;
+      }
+      return 0;
+    }
+    function restart() {
+      clearTimeout(timer);
+      list.classList.remove('is-running');
+      if (stopped || !onScreen || held) return;
+      void list.offsetWidth;          /* reflow, so the bar refills from zero */
+      list.classList.add('is-running');
+      timer = setTimeout(function () {
+        btns[(current() + 1) % btns.length].click();
+        restart();
+      }, CYCLE);
+    }
+    function hold(on) { held = on; restart(); }
+
+    /* Touch fires pointerenter/leave around taps, which would hold the
+       rotation at random. Gate the hover rule on a device that really hovers. */
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      section.addEventListener('pointerenter', function () { hold(true); });
+      section.addEventListener('pointerleave', function () { hold(false); });
+    }
+    section.addEventListener('focusin', function () { hold(true); });
+    section.addEventListener('focusout', function (e) {
+      if (!section.contains(e.relatedTarget)) hold(false);
+    });
+
+    /* pointerdown/keydown rather than click: the rotation advances by calling
+       .click(), and those synthetic clicks must not read as the reader
+       taking over. */
+    btns.forEach(function (b) {
+      b.addEventListener('pointerdown', function () { stopped = true; restart(); });
+      b.addEventListener('keydown', function () { stopped = true; restart(); });
+    });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { onScreen = e.isIntersecting; });
+        restart();
+      }, { threshold: 0.2 }).observe(section);
+    } else {
+      onScreen = true;
+      restart();
+    }
+  })();
+
+  /* Drives the sliding indicator on the product tabs. A MutationObserver
+     rather than a click listener: the shared tab handler owns selection, so
+     watching the attribute keeps the ink correct however the change was made
+     — pointer, arrow key, Home or End. */
+  (function () {
+    var tabs = document.getElementById('produk-tabs');
+    if (!tabs) return;
+    var btns = all('[role="tab"]', tabs);
+    if (btns.length < 2) return;
+    function sync() {
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i].getAttribute('aria-selected') === 'true') {
+          tabs.style.setProperty('--tab-i', String(i));
+          return;
+        }
+      }
+    }
+    sync();
+    if ('MutationObserver' in window) {
+      new MutationObserver(sync).observe(tabs, {
+        subtree: true, attributes: true, attributeFilter: ['aria-selected']
+      });
+    }
+  })();
 
   var chips = all('.chip[data-filter]'), grid = document.getElementById('svc-grid');
   if (chips.length && grid) {

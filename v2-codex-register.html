@@ -13,9 +13,19 @@
 <style>
 /* ==========================================================================
    DECA v2-codex · register
-   The same system as v2-codex.html, at the scale of one task. Three steps,
-   one column, and an aside that carries the source's arch portrait and its
-   oversized backdrop letterform.
+
+   Same tokens, same chrome and same shell as v2-codex.html. The first cut of
+   this page carried its own 71px static header, a 1280px measure, a flat
+   --green-pale column and no footer — four separate signals that read as a
+   different site. It now opens with the notice bar, runs the real sticky
+   header and the real footer, and measures on the same 1200px shell.
+
+   Two deliberate differences from the marketing page:
+   · the header carries no solid "Buat akun" button. This page's one primary
+     action is the form itself, and a second solid button for the same action
+     in the same viewport is exactly the duplication the system avoids.
+   · --danger / --danger-pale exist here only. Error states are real and the
+     marketing page has nothing to reuse.
    ========================================================================== */
 :root{
   --paper:#f8fbf8;
@@ -23,25 +33,25 @@
   --ink:#102521;
   --muted:#657773;
   --line:#e3ebe6;
-  --green:#05bd3b;        /* brand fill, 2.41 on paper — never text */
-  --green-ink:#08803f;    /* 4.83 on paper, 5.04 on white */
-  --green-icon:#11a63a;
+  --green:#05bd3b;        /* brand fill — 2.41 on paper, never used as text */
+  --green-ink:#08803f;    /* text-safe green — 4.83 on paper, 5.04 on white */
+  --green-icon:#11a63a;   /* icon green, 3.08 */
   --green-pale:#e7f9eb;
-  --blue-ink:#0168c8;     /* 5.50 on white */
-  --danger:#b3261e;       /* 6.68 on white, 5.84 on danger-pale */
+  --blue-ink:#0168c8;     /* line blue — 5.50 on white, drives the progress ramp */
+  --danger:#b3261e;       /* 6.68 on white, 5.72 on danger-pale */
   --danger-pale:#fdeceb;
-  --muted-deep:#4f635c;   /* 5.82 on green-pale — --muted only reaches 4.25 there */
-  --on-dark:#cdf0d6;      /* 9.8 on the caption scrim */
-  --scrim:#092016;
-  --line-hover:#a9bdb4;
+  --on-band:#dcf1e2;      /* text on the photo caption scrim, 9.69 worst case */
+  --line-strong:#b6dfc1;  /* the system's hover border */
   --display:'Manrope',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
   --body:'DM Sans',system-ui,-apple-system,Segoe UI,Helvetica Neue,Arial,sans-serif;
-  /* The shared radius scale, kept whole even though this page only uses two
-     of the four, so the two v2-codex files read as one system. */
+  /* The shared geometry scale, carried whole even where this page uses only
+     part of it. Trimming it here would make the two v2-codex token blocks
+     diverge, which is the drift this rebuild exists to remove. */
   --r-btn:7px; --r-card:9px; --r-chip:10px; --r-panel:14px;
   --r-arch:7px 120px 7px 7px;
+  --max:1200px;
+  --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:40px; --s6:48px; --s8:64px; --s10:80px;
   --spring:cubic-bezier(.22,1,.36,1);
-  --s2:16px; --s3:24px; --s4:32px; --s5:40px; --s6:48px;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -52,11 +62,13 @@ a{color:inherit;text-decoration:none}
 ul{margin:0;padding:0;list-style:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 img{max-width:100%;display:block}
-:focus-visible{outline:3px solid var(--blue-ink);outline-offset:2px;border-radius:5px}
+:focus-visible{outline:3px solid var(--blue-ink);outline-offset:2px;border-radius:4px}
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:12px;top:12px;z-index:60;background:var(--white);padding:10px 16px;border-radius:var(--r-btn);border:1px solid var(--line);font-weight:700}
+.shell{width:min(var(--max),calc(100% - 64px));margin-inline:auto}
+.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--green-ink);margin-bottom:var(--s2)}
 
-/* ---------- entrance ---------- */
+/* ---------- motion (same mechanism as v2-codex.html) ---------- */
 @property --en-x{syntax:"<length>";inherits:false;initial-value:0px}
 @property --en-y{syntax:"<length>";inherits:false;initial-value:20px}
 @keyframes enter{from{opacity:0;translate:var(--en-x) var(--en-y)}to{opacity:1;translate:0 0}}
@@ -65,46 +77,101 @@ img{max-width:100%;display:block}
 @keyframes pop{from{scale:.6;opacity:0}to{scale:1;opacity:1}}
 html.js [data-reveal]{opacity:0}
 html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(--delay,0ms) both}
+[data-reveal][data-from="left"]{--en-x:-32px;--en-y:0px}
+[data-reveal][data-from="right"]{--en-x:32px;--en-y:0px}
 
-/* ---------- header ---------- */
-.auth-head{height:71px;display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
-  padding:0 max(calc((100% - 1280px)/2),24px);background:var(--white);border-bottom:1px solid var(--line)}
-.brand{position:relative;width:104px;height:46px;overflow:hidden;flex:none}
-.brand img{position:absolute;width:104px;height:104px;max-width:none;left:0;top:-35px}
-.head-back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted);
-  min-height:44px;transition:color .2s}
-.head-back:hover{color:var(--green-ink)}
+/* ---------- notice bar ---------- */
+.notice-bar{display:flex;align-items:center;justify-content:center;gap:9px;padding:8px 16px;background:var(--green-pale);color:var(--green-ink);font-size:11px;letter-spacing:.06em;font-weight:600;text-align:center}
+.notice-bar i{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
+
+/* ---------- site header ---------- */
+.site-header{position:sticky;top:0;z-index:40;background:color-mix(in oklab,var(--paper) 94%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.header-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);height:78px}
+.brand{position:relative;width:112px;height:50px;overflow:hidden;flex:none}
+.brand img{position:absolute;width:112px;height:112px;max-width:none;left:0;top:-38px}
+.main-nav{display:none;align-items:center;gap:var(--s3)}
+.main-nav a{font-size:13px;font-weight:600;color:var(--muted);transition:color .2s}
+.main-nav a:hover{color:var(--green-ink)}
+.header-actions{display:flex;align-items:center;gap:var(--s2)}
+.login-link{display:none;font-size:13px;font-weight:600;color:var(--muted)}
+.login-link:hover{color:var(--green-ink)}
+.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;align-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:var(--r-btn);background:var(--white)}
+.burger span{width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .2s,opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-mobile{display:none;border-top:1px solid var(--line);background:var(--white)}
+.nav-mobile.open{display:block}
+.nav-mobile a{display:block;padding:15px var(--s3);font-size:14px;font-weight:600;border-bottom:1px solid var(--line)}
+.nav-mobile a:hover{background:var(--green-pale)}
+
+/* ---------- buttons (metrics matched to v2-codex.html) ---------- */
+/* Base button is byte-identical to v2-codex.html, so it can never drift. The
+   shimmer lives in a named variant below rather than being folded into
+   .btn-primary here — that fold is what made the two files diverge. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:49px;padding:0 21px;border-radius:var(--r-btn);font-size:13px;font-weight:700;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s,color .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
+.btn-primary:hover{box-shadow:0 10px 22px rgb(6 168 50 / .22)}
+/* Attention variant, on the two in-form primary actions only. This page has
+   one CTA per viewport, so the sweep reads as a focal point; the marketing
+   page runs six at once, where it would just be more noise. */
+.btn-attn{position:relative;overflow:hidden}
+.btn-attn::after{content:"";position:absolute;inset:0 auto 0 0;width:38%;
+  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .5),transparent);
+  animation:sheen 5.5s ease-in-out infinite;pointer-events:none}
+.btn-quiet{color:var(--ink);padding:0 6px}
+.btn-quiet i{font-style:normal;color:var(--green-ink);transition:transform .2s}
+.btn-quiet:hover i{transform:translateX(-3px)}
+.link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--green-ink);min-height:44px}
+.link i{font-style:normal;transition:transform .2s}
+.link:hover i{transform:translate(3px,-3px)}
 
 /* ---------- layout ---------- */
-.auth-layout{min-height:calc(100vh - 71px);display:grid;grid-template-columns:1fr}
-@media (min-width:1000px){ .auth-layout{grid-template-columns:.86fr 1.14fr} }
+.auth-layout{min-height:calc(100vh - 112px);display:grid;grid-template-columns:1fr}
+@media (min-width:1000px){
+  .auth-layout{grid-template-columns:.86fr 1.14fr}
+  /* A hairline, because the aside's wash fades into the same paper the form
+     sits on and the split would otherwise dissolve. */
+  .auth-main{border-left:1px solid var(--line)}
+}
 
 /* ---------- aside ---------- */
-.auth-aside{position:relative;overflow:hidden;background:var(--green-pale);padding:var(--s6) var(--s5) var(--s5)}
-@media (min-width:1000px){ .auth-aside{padding:44px var(--s3) 48px 5vw} }
+/* The home hero's own treatment — a green glow over a white-to-paper ramp —
+   rather than the flat --green-pale block this page opened with. */
+.auth-aside{position:relative;overflow:hidden;padding:var(--s6) var(--s5) var(--s5);
+  background:radial-gradient(80% 46% at 32% 26%,var(--green-pale) 0,transparent 64%),linear-gradient(180deg,var(--white),var(--paper))}
+/* The left gutter tracks .shell exactly, so the photo's left edge lines up
+   with the logo in the header and again in the footer. It has to be `100vw`:
+   the aside is one grid column, so `100%` is the column, not the page. */
+@media (min-width:1000px){
+  .auth-aside{padding:var(--s6) var(--s3) var(--s6) max(calc((100vw - var(--max))/2),32px)}
+}
 .aside-in{position:relative;z-index:1;max-width:470px}
 .aside-photo{position:relative;margin:0;overflow:hidden;border-radius:var(--r-arch);
   aspect-ratio:4/3;box-shadow:0 20px 55px rgb(22 59 39 / .16);border:1px solid var(--line)}
 .aside-photo img{width:100%;height:100%;object-fit:cover}
 .aside-scrim{position:absolute;inset:34% 0 0;
-  background:linear-gradient(0deg,color-mix(in oklab,var(--scrim) 90%,transparent),transparent)}
+  background:linear-gradient(0deg,color-mix(in oklab,var(--ink) 88%,transparent),transparent)}
 .aside-caption{position:absolute;left:24px;right:22px;bottom:22px;display:grid;gap:7px;color:var(--white)}
-.aside-caption small{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--on-dark)}
+.aside-caption small{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--on-band)}
 .aside-caption b{font-family:var(--display);font-weight:750;font-size:clamp(24px,2.6vw,32px);letter-spacing:-.05em;line-height:1.1}
-.aside-caption i{font-style:normal;font-size:10px;letter-spacing:.13em;color:var(--on-dark)}
-.aside-benefits{display:flex;flex-wrap:wrap;gap:10px var(--s3);margin-top:var(--s4)}
-.aside-benefits li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-deep)}
-.aside-benefits i{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;flex:none;
-  background:var(--white);color:var(--green-ink);font-size:10px;font-style:normal;font-weight:700}
-.aside-mark{position:absolute;right:-56px;bottom:-150px;color:var(--white);opacity:.55;
-  font-family:var(--display);font-weight:800;font-size:400px;line-height:.8;letter-spacing:-.15em;pointer-events:none;user-select:none}
+.aside-caption i{font-style:normal;font-size:10px;letter-spacing:.13em;color:var(--on-band)}
+/* Chips, matching the main page's .chip geometry — white fill so the wash
+   behind them can never move their contrast. */
+.aside-benefits{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--s4)}
+.aside-benefits li{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:14px;
+  background:var(--white);border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink)}
+.aside-benefits i{font-style:normal;color:var(--green-ink);font-weight:700}
+.aside-mark{position:absolute;right:-56px;bottom:-150px;color:var(--green-pale);
+  font-family:var(--display);font-weight:800;font-size:400px;line-height:.8;letter-spacing:-.15em;
+  pointer-events:none;user-select:none}
 @media (max-width:999px){ .aside-mark{display:none} }
 
-/* ---------- main / form ---------- */
-.auth-main{display:flex;justify-content:center;padding:var(--s6) var(--s3) var(--s5)}
-@media (min-width:1000px){ .auth-main{padding:52px var(--s5) var(--s5)} }
+/* ---------- form column ---------- */
+.auth-main{display:flex;justify-content:center;padding:var(--s6) var(--s3) var(--s8)}
+@media (min-width:1000px){ .auth-main{padding:52px var(--s5) var(--s8)} }
 .auth-panel{width:min(100%,540px)}
-.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--green-ink);margin-bottom:12px}
 .auth-panel h1{font-size:clamp(32px,3.6vw,44px)}
 .auth-panel .lede{margin:12px 0 var(--s5);color:var(--muted);max-width:48ch}
 
@@ -114,7 +181,7 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 .track span{display:block;height:100%;width:33.333%;border-radius:4px;
   background:linear-gradient(90deg,var(--green-ink),var(--blue-ink));
   transition:width .5s var(--spring)}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px}
+.step-labels{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px}
 .step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);transition:color .3s}
 .step:nth-child(2){justify-content:center}
 .step:last-child{justify-content:flex-end}
@@ -126,15 +193,19 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 .step[data-state="done"]{color:var(--ink)}
 .step[data-state="done"] b{background:var(--green-ink);border-color:var(--green-ink);color:var(--white)}
 
-/* steps panels */
+/* step panels */
 .form-step{display:grid;gap:var(--s3)}
 .form-step[hidden]{display:none}
-.step-head{display:grid;grid-template-columns:34px 1fr;gap:var(--s2);margin-bottom:6px}
-.step-head>span{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.05em;color:var(--green-pale);
-  -webkit-text-stroke:1px var(--green-icon);line-height:1}
+/* The system's numbered step: a filled green-pale disc, not an outlined
+   numeral — the outlined "01" appeared nowhere else in the build. */
+.step-head{display:grid;grid-template-columns:30px 1fr;gap:var(--s2);margin-bottom:6px}
+.step-head>span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:var(--green-pale);color:var(--green-ink);font-family:var(--display);
+  font-weight:750;font-size:12px;letter-spacing:-.02em}
 .step-head h2{font-size:19px;margin-bottom:5px}
 .step-head p{font-size:13px;color:var(--muted)}
 
+/* fields */
 .field{display:grid;gap:7px}
 .field>span{font-size:13px;font-weight:700;color:var(--ink)}
 .field input,.field select{width:100%;min-height:50px;padding:0 15px;border:1px solid var(--line);
@@ -143,7 +214,7 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 /* Placeholders are text, so they hold the same 4.5:1 the body does. The
    "Contoh:" prefix on each is what marks them as hints rather than values. */
 .field input::placeholder{color:var(--muted)}
-.field input:hover,.field select:hover{border-color:var(--line-hover)}
+.field input:hover,.field select:hover{border-color:var(--line-strong)}
 .field input:focus,.field select:focus{outline:none;border-color:var(--green-ink);box-shadow:0 0 0 3px var(--green-pale)}
 .field input[aria-invalid="true"],.field select[aria-invalid="true"]{border-color:var(--danger);background:var(--danger-pale)}
 .field input[aria-invalid="true"]:focus,.field select[aria-invalid="true"]:focus{box-shadow:0 0 0 3px var(--danger-pale)}
@@ -164,7 +235,7 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 .needs-opts label{display:flex;align-items:center;gap:11px;padding:13px 15px;min-height:50px;
   border:1px solid var(--line);border-radius:var(--r-btn);background:var(--white);cursor:pointer;
   font-size:14px;transition:border-color .2s,background .2s}
-.needs-opts label:hover{border-color:var(--green-ink);background:var(--green-pale)}
+.needs-opts label:hover{border-color:var(--line-strong);background:var(--green-pale)}
 .needs-opts input{width:19px;height:19px;accent-color:var(--green-ink);flex:none;margin:0;cursor:pointer}
 .needs-opts label:has(input:checked){border-color:var(--green-ink);background:var(--green-pale)}
 .needs-opts label:has(input:focus-visible){outline:3px solid var(--blue-ink);outline-offset:2px}
@@ -174,18 +245,6 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
   padding-top:var(--s4);border-top:1px solid var(--line);flex-wrap:wrap}
 .secure{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
 .secure i{font-style:normal;color:var(--green-ink)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:50px;padding:0 22px;
-  border-radius:var(--r-btn);font-size:14px;font-weight:700;position:relative;overflow:hidden;
-  transition:transform .2s,box-shadow .2s,background .2s,border-color .2s,color .2s}
-.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .16)}
-.btn-primary::after{content:"";position:absolute;inset:0 auto 0 0;width:38%;
-  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .55),transparent);
-  animation:sheen 5.5s ease-in-out infinite;pointer-events:none}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 11px 24px rgb(6 168 50 / .26)}
-.btn-back{color:var(--muted);padding:0 4px;min-height:44px;font-size:13px}
-.btn-back:hover{color:var(--ink)}
-.btn-back i{font-style:normal;transition:transform .2s}
-.btn-back:hover i{transform:translateX(-3px)}
 .status{font-size:12px;color:var(--muted);margin-bottom:var(--s2)}
 .status b{color:var(--ink)}
 
@@ -200,17 +259,39 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 .done p{color:var(--muted)}
 .done .btn{margin-top:var(--s2)}
 
-/* foot */
+/* foot of the form */
 .auth-foot{margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 .auth-foot a{color:var(--green-ink);font-weight:700}
 .auth-foot a:hover{text-decoration:underline;text-underline-offset:3px}
 .auth-privacy{margin-top:10px;font-size:12px;color:var(--muted)}
 
+/* ---------- footer (identical to v2-codex.html) ---------- */
+.footer{background:var(--white);border-top:1px solid var(--line);padding:var(--s8) 0 0}
+.footer-grid{display:grid;gap:var(--s5)}
+.footer h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s2);font-weight:700}
+.footer li{font-size:13px;color:var(--muted);margin-bottom:10px}
+.footer li a{color:var(--ink);font-weight:600}
+.footer li a:hover{color:var(--green-ink);text-decoration:underline;text-underline-offset:3px}
+.footer li a[aria-current="page"]{color:var(--green-ink)}
+.footer-brand .tagline{font-size:13px;color:var(--muted);margin-top:var(--s2);font-weight:600;font-family:var(--display)}
+.footer-bottom{margin-top:var(--s6);padding:var(--s3) 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:space-between;font-size:12px;color:var(--muted)}
+
+/* ---------- responsive ---------- */
+@media (min-width:640px){ .footer-grid{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:900px){
+  .main-nav{display:flex}
+  .login-link{display:inline}
+  .burger{display:none}
+  .nav-mobile{display:none !important}
+  .footer-grid{grid-template-columns:1.3fr 1fr 1fr;gap:var(--s6)}
+}
+@media (min-width:1100px){ .footer-grid{grid-template-columns:1.35fr .8fr .8fr 1fr 1fr;gap:var(--s5)} }
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   html.js [data-reveal]{opacity:1}
   html.js [data-reveal].is-in{animation:none}
-  .btn-primary::after,.done-mark::after{animation:none;opacity:0}
+  .btn-attn::after,.done-mark::after{animation:none;opacity:0}
 }
 </style>
 <script>document.documentElement.classList.add('js');</script>
@@ -218,13 +299,40 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 <body>
 <a class="skip" href="#form">Lewati ke formulir</a>
 
-<header class="auth-head">
-  <a class="brand" href="v2-codex.html" aria-label="DECA — Beranda"><img src="logos/deca-b2b-logo.png" width="1080" height="1080" alt="DECA"></a>
-  <a class="head-back" href="v2-codex.html"><span aria-hidden="true">←</span> Kembali ke DECA</a>
+<p class="notice-bar" data-od-id="notice"><i></i> Pendaftaran akun bisnis &nbsp;·&nbsp; Ditinjau oleh tim CS DECA</p>
+
+<header class="site-header" data-od-id="site-header">
+  <div class="shell header-in">
+    <a class="brand" href="v2-codex.html" aria-label="DECA — Beranda"><img src="logos/deca-b2b-logo.png" width="1080" height="1080" alt="DECA"></a>
+    <nav class="main-nav" aria-label="Navigasi utama">
+      <a href="v2-codex.html#produk">Produk</a>
+      <a href="v2-codex.html#layanan">Layanan</a>
+      <a href="v2-codex.html#solusi">Solusi</a>
+      <a href="v2-codex.html#panduan">Panduan</a>
+      <a href="v2-codex.html#tentang">Tentang DECA</a>
+      <a href="v2-codex.html#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <a class="login-link" href="v2-codex.html#kontak">Masuk</a>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="nav-mobile" aria-label="Buka menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="v2-codex.html#ekosistem">Ekosistem</a>
+    <a href="v2-codex.html#produk">Produk</a>
+    <a href="v2-codex.html#layanan">Layanan</a>
+    <a href="v2-codex.html#katalog">Channel pembayaran</a>
+    <a href="v2-codex.html#solusi">Solusi</a>
+    <a href="v2-codex.html#keamanan">Keamanan</a>
+    <a href="v2-codex.html#panduan">Panduan</a>
+    <a href="v2-codex.html#bantuan">Bantuan</a>
+    <a href="v2-codex.html#tentang">Tentang DECA</a>
+    <a href="v2-codex.html#faq">FAQ</a>
+  </div>
 </header>
 
 <main class="auth-layout">
-  <aside class="auth-aside">
+  <aside class="auth-aside" data-od-id="register-aside">
     <div class="aside-in">
       <figure class="aside-photo" data-reveal data-from="left">
         <img src="imagery/business-team.jpg" width="1600" height="1200"
@@ -246,14 +354,14 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
   </aside>
 
   <section class="auth-main">
-    <div class="auth-panel" id="form">
+    <div class="auth-panel" id="form" data-od-id="register-form">
       <p class="eyebrow">Akun bisnis DECA</p>
-      <h1>Mulai dari sini.</h1>
+      <h1 data-od-id="register-title">Mulai dari sini.</h1>
       <p class="lede">Ceritakan sedikit tentang dirimu dan bisnismu. Tim DECA akan membantu mengarahkan proses berikutnya.</p>
 
       <div class="progress">
         <div class="track"><span id="bar"></span></div>
-        <div class="steps" id="step-labels">
+        <div class="step-labels" id="step-labels">
           <div class="step" data-state="current"><b>01</b><span>Kontak</span></div>
           <div class="step"><b>02</b><span>Bisnis</span></div>
           <div class="step"><b>03</b><span>Selesai</span></div>
@@ -264,7 +372,7 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
 
       <form id="signup" novalidate>
         <!-- Step 1 -->
-        <section class="form-step" data-step="1" aria-labelledby="h-step1">
+        <section class="form-step" data-step="1" aria-labelledby="h-step1" data-od-id="step-kontak">
           <div class="step-head">
             <span aria-hidden="true">01</span>
             <div><h2 id="h-step1">Siapa yang bisa kami hubungi?</h2><p>Gunakan kontak aktif agar tim kami dapat menghubungimu.</p></div>
@@ -289,12 +397,12 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
           </div>
           <div class="form-actions">
             <span class="secure"><i aria-hidden="true">◇</i> Informasimu dijaga dengan baik</span>
-            <button class="btn btn-primary" type="button" data-next>Lanjutkan <span aria-hidden="true">→</span></button>
+            <button class="btn btn-primary btn-attn" type="button" data-next data-od-id="cta-step1">Lanjutkan <span aria-hidden="true">→</span></button>
           </div>
         </section>
 
         <!-- Step 2 -->
-        <section class="form-step" data-step="2" aria-labelledby="h-step2" hidden>
+        <section class="form-step" data-step="2" aria-labelledby="h-step2" hidden data-od-id="step-bisnis">
           <div class="step-head">
             <span aria-hidden="true">02</span>
             <div><h2 id="h-step2">Ceritakan tentang bisnismu.</h2><p>Biar kami bisa memahami kebutuhan yang paling sesuai.</p></div>
@@ -332,20 +440,20 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
             </div>
           </fieldset>
           <div class="form-actions">
-            <button class="btn btn-back" type="button" data-back><i aria-hidden="true">←</i> Kembali</button>
-            <button class="btn btn-primary" type="submit">Kirim permintaan <span aria-hidden="true">→</span></button>
+            <button class="btn btn-quiet" type="button" data-back><i aria-hidden="true">←</i> Kembali</button>
+            <button class="btn btn-primary btn-attn" type="submit" data-od-id="cta-submit">Kirim permintaan <span aria-hidden="true">→</span></button>
           </div>
         </section>
 
         <!-- Step 3 -->
-        <section class="form-step" data-step="3" aria-labelledby="h-step3" hidden>
+        <section class="form-step" data-step="3" aria-labelledby="h-step3" hidden data-od-id="step-selesai">
           <div class="done">
             <span class="done-mark" aria-hidden="true">✓</span>
             <p class="kicker">Permintaan pendaftaran</p>
             <h2 id="h-step3">Terima kasih!</h2>
             <p id="done-msg">Permintaanmu sudah dikirim.</p>
             <p>Tim CS DECA akan mengirim email berisi langkah untuk login ke portal bisnis setelah meninjau permintaanmu. <strong>Akun tidak dibuat langsung dari website.</strong></p>
-            <a class="btn btn-primary" href="v2-codex.html">Kembali ke DECA <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-primary" href="v2-codex.html" data-od-id="cta-done">Kembali ke DECA <span aria-hidden="true">↗</span></a>
           </div>
         </section>
       </form>
@@ -356,10 +464,81 @@ html.js [data-reveal].is-in{animation:enter var(--dur,680ms) var(--spring) var(-
   </section>
 </main>
 
+<footer class="footer" data-od-id="footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand" style="width:122px;height:39px"><img src="logos/deca-b2b-logo.png" width="1080" height="1080" alt="DECA" style="width:122px;height:122px;top:-41px"></div>
+        <p class="tagline">Powering Indonesia's Digital Payment Ecosystem.</p>
+        <p class="tagline" style="font-weight:400">Bayar apa aja, DECA tempatnya.</p>
+      </div>
+      <div>
+        <h3>Jelajahi</h3>
+        <ul>
+          <li><a href="v2-codex.html#ekosistem">Ekosistem</a></li>
+          <li><a href="v2-codex.html#produk">Produk</a></li>
+          <li><a href="v2-codex.html#layanan">Layanan</a></li>
+          <li><a href="v2-codex.html#katalog">Channel pembayaran</a></li>
+          <li><a href="v2-codex.html#solusi">Solusi</a></li>
+          <li><a href="v2-codex.html#biaya">Biaya</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Bantuan</h3>
+        <ul>
+          <li><a href="v2-codex.html#panduan">Panduan</a></li>
+          <li><a href="v2-codex.html#bantuan">Pusat bantuan</a></li>
+          <li><a href="v2-codex.html#keamanan">Keamanan</a></li>
+          <li><a href="v2-codex.html#faq">FAQ</a></li>
+          <li><a href="v2-codex.html#download">Download aplikasi</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Akun &amp; kontak</h3>
+        <ul>
+          <li><a href="#form" aria-current="page">Daftar akun bisnis</a></li>
+          <li><a href="mailto:partnership@deca.co.id">partnership@deca.co.id</a></li>
+          <li><a href="tel:+628138361376">+62 813-8361-376 · partnership</a></li>
+          <li><a href="mailto:cs@deca.co.id">cs@deca.co.id</a></li>
+          <li><a href="https://wa.me/628979513080" target="_blank" rel="noopener">0897 951 3080 · customer support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Perusahaan &amp; legal</h3>
+        <ul>
+          <li><a href="v2-codex.html#tentang">Tentang DECA</a></li>
+          <li><a href="v2-codex.html#tentang">Karier</a></li>
+          <li><a href="v2-codex-legal.html">Syarat &amp; Ketentuan</a></li>
+          <li><a href="v2-codex-legal.html#privasi">Kebijakan Privasi</a></li>
+          <li><a href="v2-codex-peta-situs.html">Peta situs</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> PT Delta Omega Beta · Jakarta, Indonesia</span>
+      <span>Gedung Arva Gondangdia Lantai 1, Jl. Rp. Soeroso No. 40 BC, Gondangdia, DKI Jakarta 10350</span>
+    </div>
+  </div>
+</footer>
+
 <script>
 (function () {
   'use strict';
   var all = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------- chrome, identical to v2-codex.html ---------- */
+  var burger = document.getElementById('burger'), mob = document.getElementById('nav-mobile');
+  if (burger && mob) {
+    burger.addEventListener('click', function () {
+      var open = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!open));
+      burger.setAttribute('aria-label', open ? 'Buka menu' : 'Tutup menu');
+      mob.classList.toggle('open', !open);
+    });
+  }
+  all('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
+
+  /* ---------- form ---------- */
   var form = document.getElementById('signup');
   if (!form) return;
 
