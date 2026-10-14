@@ -49,6 +49,9 @@
   --green:#05bd3b;        /* brand fill — 2.41 on paper, never used as text */
   --green-ink:#08803f;    /* text-safe green — 4.6+ on paper, white AND green-pale */
   --green-icon:#11a63a;   /* icon green, 3.08 */
+  /* The label that sits ON the brand fill. A role, not an ink: the fill does
+     not move between themes, so this must not either. */
+  --on-green:#102521;
   --green-pale:#e7f9eb;
   --blue-ink:#0168c8;     /* line blue — 5.50 on white, 4.84 on blue-pale */
   --blue-pale:#eaf3ff;
@@ -105,6 +108,58 @@ section{padding:var(--s10) 0}
 
 .head .h2{margin-bottom:var(--s2)}
 
+/* ==========================================================================
+   DARK THEME
+   Role tokens, not a second palette. 455 of this sheet's colours are already
+   var(), so the theme is an override rather than a parallel set of rules.
+
+   Two tokens change MEANING rather than value. --green-ink is "green readable
+   on a pale surface"; on a dark canvas the brand green itself measures 7.69:1,
+   so it needs no lightening and the three greens collapse into one. And
+   --green-pale is "a pale green surface", which inverts into a dark tint.
+
+   --on-green is deliberately absent below. It is the label on the brand fill,
+   and the fill does not move between themes — letting it follow --ink is what
+   would put a light label on a bright green button at 2.15:1.
+   Every value here was solved against its own background, not chosen by eye.
+   ========================================================================== */
+[data-theme="dark"]{
+  --paper:#0a0f0b;
+  --white:#131b14;
+  --ink:#e9efe9;
+  --muted:#9aa79c;
+  --line:#242e25;
+  --green:#05bd3b;
+  --green-ink:#05bd3b;
+  --green-icon:#05bd3b;
+  --green-pale:#112313;
+  --blue-ink:#4687d5;
+  --blue-pale:#0e202c;
+  --mint:#0f1f1b;
+  --teal-ink:#4c8f8a;
+  --line-strong:#1b752b;
+  --on-band:#dcf1e2;
+  --band-a:#04552a; --band-b:#087038; --band-c:#064e7d;
+}
+
+/* ---------- theme toggle ---------- */
+.theme-toggle{display:grid;place-items:center;width:38px;height:38px;flex:none;
+  border:1px solid var(--line);border-radius:var(--r-btn);background:var(--white);
+  color:var(--ink);transition:border-color .2s,color .2s}
+
+.theme-toggle:hover{border-color:var(--green-ink);color:var(--green-ink)}
+
+.theme-toggle svg{width:17px;height:17px}
+
+/* The icon shows what the press will give you, not what you are in. */
+.theme-toggle .i-sun{display:none}
+
+.theme-toggle .i-moon{display:block}
+
+[data-theme="dark"] .theme-toggle .i-sun{display:block}
+
+[data-theme="dark"] .theme-toggle .i-moon{display:none}
+
 /* ---------- notice ---------- */
 .notice-bar{display:flex;align-items:center;justify-content:center;gap:9px;padding:8px 16px;background:var(--green-pale);color:var(--green-ink);font-size:11px;letter-spacing:.06em;font-weight:600;text-align:center}
 
@@ -156,7 +211,7 @@ section{padding:var(--s10) 0}
 
 .btn:hover{transform:translateY(-2px)}
 
-.btn-primary{background:var(--green);color:var(--ink);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
+.btn-primary{background:var(--green);color:var(--on-green);box-shadow:0 7px 17px rgb(6 168 50 / .14)}
 
 .btn-primary:hover{box-shadow:0 10px 22px rgb(6 168 50 / .22)}
 
@@ -211,6 +266,29 @@ section{padding:var(--s10) 0}
 
 @media (min-width:1100px){
 .footer-grid{grid-template-columns:1.35fr .8fr .8fr 1fr 1fr;gap:var(--s5)}
+}
+
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]):not([data-theme="dark"]){
+    --paper:#0a0f0b;
+    --white:#131b14;
+    --ink:#e9efe9;
+    --muted:#9aa79c;
+    --line:#242e25;
+    --green:#05bd3b;
+    --green-ink:#05bd3b;
+    --green-icon:#05bd3b;
+    --green-pale:#112313;
+    --blue-ink:#4687d5;
+    --blue-pale:#0e202c;
+    --mint:#0f1f1b;
+    --teal-ink:#4c8f8a;
+    --line-strong:#1b752b;
+    --on-band:#dcf1e2;
+    --band-a:#04552a; --band-b:#087038; --band-c:#064e7d;
+  }
+:root:not([data-theme="light"]) .theme-toggle .i-sun{display:block}
+:root:not([data-theme="light"]) .theme-toggle .i-moon{display:none}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -408,7 +486,19 @@ tbody tr:last-child td{border-bottom:0}
 .band .tel{font-size:13px;color:var(--on-band);text-decoration:underline;text-underline-offset:3px}
 @media (min-width:900px){ .band .shell{grid-template-columns:1fr auto} }
 </style>
-<script>document.documentElement.classList.add('js');</script>
+<script>
+/* Runs before the first paint so the theme is right on the first frame, which
+   is the whole reason this is inline in the head rather than in the body
+   script. Reads the same key the toggle writes. */
+(function () {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('deca-theme');
+    if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  root.classList.add('js');
+})();
+</script>
 </head>
 <body>
 <a class="skip" href="#main" style="position:absolute;left:-9999px">Lewati ke konten utama</a>
@@ -427,6 +517,7 @@ tbody tr:last-child td{border-bottom:0}
       <a href="v2-codex.html#faq">FAQ</a>
     </nav>
     <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Ganti ke tema gelap"><svg class="i-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.8v2.1M12 19.1v2.1M2.8 12h2.1M19.1 12h2.1M5.5 5.5l1.5 1.5M17 17l1.5 1.5M18.5 5.5L17 7M7 17l-1.5 1.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.4A8.4 8.4 0 1 1 9.6 4a6.9 6.9 0 0 0 10.4 10.4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></button>
       <a class="login-link" href="v2-codex.html#kontak">Masuk</a>
       <a class="btn btn-primary btn-small" href="v2-codex-register.html">Buat akun <span>↗</span></a>
       <button class="burger" id="burger" aria-expanded="false" aria-controls="nav-mobile" aria-label="Buka menu"><span></span><span></span><span></span></button>
@@ -609,6 +700,34 @@ tbody tr:last-child td{border-bottom:0}
 (function () {
   'use strict';
   var all = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  /* ---------- theme ----------
+     The head script has already set data-theme before the first paint; this
+     only handles the toggle and keeps an explicit choice sticky. A reader who
+     never chose keeps following the system, which the CSS does on its own. */
+  var themeBtn = document.getElementById('theme-toggle');
+  if (themeBtn) {
+    var rootEl = document.documentElement;
+    /* With no attribute set the media query is in charge, so the button has to
+       ask what is actually rendering rather than what the attribute says. */
+    var effective = function () {
+      var t = rootEl.getAttribute('data-theme');
+      if (t) return t;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    var syncTheme = function () {
+      var dark = effective() === 'dark';
+      themeBtn.setAttribute('aria-pressed', String(dark));
+      themeBtn.setAttribute('aria-label', dark ? 'Ganti ke tema terang' : 'Ganti ke tema gelap');
+    };
+    themeBtn.addEventListener('click', function () {
+      var next = effective() === 'dark' ? 'light' : 'dark';
+      rootEl.setAttribute('data-theme', next);
+      try { localStorage.setItem('deca-theme', next); } catch (e) {}
+      syncTheme();
+    });
+    syncTheme();
+  }
+
   var burger = document.getElementById('burger'), mob = document.getElementById('nav-mobile');
   if (burger && mob) {
     burger.addEventListener('click', function () {
